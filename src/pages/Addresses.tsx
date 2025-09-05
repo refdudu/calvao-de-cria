@@ -22,16 +22,13 @@ export const AddressPage = () => {
         ))}
       </div>
       <div className="flex gap-4 mt-6">
-        <Button variant="outline" onClick={() => navigate("/")}>
+        <Button href="/" variant="outline">
           Voltar às compras
         </Button>
-        <Button
-          variant="outline"
-          onClick={() => navigate(`/checkout/address/`)}
-        >
+        <Button variant="outline" href={`/checkout/address/`}>
           Novo endereço
         </Button>
-        <Button onClick={() => navigate(`/checkout/confirm`)}>Continuar</Button>
+        <Button href={`/checkout/confirm`}>Continuar</Button>
       </div>
     </>
   );

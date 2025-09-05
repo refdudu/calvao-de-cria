@@ -48,10 +48,10 @@ export const ConfirmationCheckoutPage = () => (
       </div>
     </div>
     <div className="flex gap-4 mt-6">
-      <Button variant="outline" onClick={() => {}}>
+      <Button href="/checkout" variant="outline">
         Voltar
       </Button>
-      <Button onClick={() => {}}>Finalizar pedido</Button>
+      <Button href="/payment/pix">Finalizar pedido</Button>
     </div>
   </>
 );

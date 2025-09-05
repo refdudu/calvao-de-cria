@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import {
   AuthPageWrapper,
   Button,
@@ -8,8 +7,6 @@ import {
 } from "../components";
 
 export const ResetPasswordPage = () => {
-  const navigate = useNavigate();
-
   return (
     <AuthPageWrapper title="Insira sua nova senha">
       <Input
@@ -24,9 +21,7 @@ export const ResetPasswordPage = () => {
         placeholder="Confirmar nova senha"
         type="password"
       />
-      <Button onClick={() => navigate("/auth/login")}>
-        Confirmar nova senha
-      </Button>
+      <Button href="/auth/login">Confirmar nova senha</Button>
     </AuthPageWrapper>
   );
 };

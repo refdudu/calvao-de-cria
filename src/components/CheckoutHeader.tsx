@@ -4,9 +4,6 @@ const step = 1;
 export const CheckoutHeader = () => (
   <div className="w-full h-16 bg-primary shadow-md flex justify-center items-center">
     <div className="flex items-center gap-4 text-white font-semibold">
-      <a href="#/home" className="absolute left-4 md:left-8 lg:left-16">
-        <LogoIcon />
-      </a>
       <div className="flex items-center gap-2">
         <LocationIcon
           className={`w-5 h-5 ${step >= 1 ? "text-white" : "text-gray-300"}`}

@@ -14,7 +14,7 @@ export const Button = ({
   variant = "primary",
 }: ButtonProps) => {
   const baseClasses =
-    "w-full text-center py-2.5 rounded-md font-semibold transition-opacity duration-200 hover:opacity-90";
+    "w-full block text-center py-2.5 rounded-md font-semibold transition-opacity duration-200 hover:opacity-90";
   const variants = {
     primary: "bg-primary text-white",
     secondary: "bg-secondary text-white",

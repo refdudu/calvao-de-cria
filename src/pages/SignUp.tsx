@@ -27,7 +27,7 @@ export const SignUpPage = () => {
         placeholder="Senha"
         type="password"
       />
-      <Button onClick={() => navigate("/")}>Criar conta</Button>
+      <Button href="/">Criar conta</Button>
     </AuthPageWrapper>
   );
 };

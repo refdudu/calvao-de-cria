@@ -1,8 +1,6 @@
-import { useNavigate } from "react-router-dom";
 import { LocationIcon, Button } from "../components";
 
 export const AddressFormPage = () => {
-  const navigate = useNavigate();
   return (
     <>
       <h2 className="text-xl font-medium mb-4 flex items-center gap-2">
@@ -23,10 +21,10 @@ export const AddressFormPage = () => {
         <input placeholder="Estado" className="p-2 border rounded" />
       </div>
       <div className="flex gap-4 mt-6">
-        <Button variant="outline" onClick={() => navigate("/checkout")}>
+        <Button href="/" variant="outline">
           Voltar
         </Button>
-        <Button onClick={() => navigate("/checkout")}>Salvar endereço</Button>
+        <Button href="/checkout">Salvar endereço</Button>
       </div>
     </>
   );

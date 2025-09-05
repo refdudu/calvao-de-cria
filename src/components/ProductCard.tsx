@@ -1,10 +1,7 @@
-import { useNavigate } from 'react-router-dom';
-import type { ProductCardProps } from '../types';
-import { Button } from './Button';
+import type { ProductCardProps } from "../types";
+import { Button } from "./Button";
 
 export const ProductCard = ({ product }: ProductCardProps) => {
-  const navigate = useNavigate();
-
   return (
     <div className="bg-items-bg flex flex-col p-4 rounded-lg shadow-md gap-2">
       <div className="w-full h-40 flex items-center justify-center overflow-hidden self-center">
@@ -27,9 +24,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         </div>
       </div>
       <div className="mt-2">
-        <Button onClick={() => navigate('/checkout')}>
-          Comprar
-        </Button>
+        <Button href="/checkout">Comprar</Button>
       </div>
     </div>
   );

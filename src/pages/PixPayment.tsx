@@ -1,9 +1,6 @@
-import { useNavigate } from "react-router-dom";
 import { Button } from "../components";
 
 export const PixPaymentPage = () => {
-  const navigate = useNavigate();
-
   return (
     <div className="w-full max-w-sm mx-auto bg-itemsBackground p-8 rounded-xl shadow-lg text-center">
       <div className="flex justify-center items-center gap-2 mb-6">
@@ -39,8 +36,8 @@ export const PixPaymentPage = () => {
         className="mx-auto my-4"
       />
       <div className="space-y-3">
-        <Button onClick={() => navigate("/")}>Ver detalhes do pedido</Button>
-        <Button variant="outline" onClick={() => navigate("/")}>
+        <Button href="/">Ver detalhes do pedido</Button>
+        <Button variant="outline" href="/">
           Voltar à loja
         </Button>
       </div>
