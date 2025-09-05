@@ -1,0 +1,19 @@
+/* Custom styles for react-drawer */
+.drawer {
+  z-index: 1000;
+}
+
+.drawer .drawer-content {
+  background-color: #ffffff;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.drawer .drawer-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 20;
+}
+
+/* Smooth transitions */
+* {
+  transition: all 0.2s ease-in-out;
+}
