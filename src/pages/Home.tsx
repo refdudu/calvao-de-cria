@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Filter } from "../components/Filter";
+import { Link } from "react-router-dom";
 
 export const Home = () => {
   const [cats, setCats] = useState<string[]>([]);
@@ -26,11 +27,12 @@ export const Home = () => {
           <b className="font-bold">29</b> produtos encontrados
         </span>
 
-        <div className="grid-cols-3  gap-6 grid flex-1">
+        <div className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 grid flex-1">
           {cats.map((cat, index) => (
-            <div
+            <Link
+              to={`/product/${cat}`}
               key={index}
-              className="bg-items-bg flex flex-col p-4 rounded-lg shadow-md"
+              className="bg-white flex flex-col p-4 rounded-lg shadow-md"
             >
               <div className="max-w-62 h-32 overflow-hidden self-center">
                 <img src={cat} className="object-cover" alt={`Cat ${index}`} />
@@ -47,7 +49,7 @@ export const Home = () => {
                   <span>60% OFF</span>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

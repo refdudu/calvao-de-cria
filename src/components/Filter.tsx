@@ -20,7 +20,7 @@ export const Filter = ({ selectedPrice, onPriceChange }: FilterProps) => {
   ];
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="hidden md:flex flex-col gap-4">
       <span className="text-xl">Refine sua busca</span>
       <span className="text-lg">Por preço</span>
       <div className="flex flex-col gap-2">

@@ -5,6 +5,11 @@ export interface Product {
   oldPrice: number;
   discount: number;
   image: string;
+  description?: string;
+  features?: string[];
+  category?: string;
+  brand?: string;
+  images?: string[];
 }
 
 export interface CartItem {

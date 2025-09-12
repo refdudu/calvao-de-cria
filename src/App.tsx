@@ -6,12 +6,16 @@ import { SignUpPage } from "./pages/SignUp";
 import { ForgotPasswordPage } from "./pages/ForgotPassword";
 import { ResetPasswordPage } from "./pages/ResetPasswordPage";
 import { PixPaymentPage } from "./pages/PixPayment";
+import { ProductDetailsPage } from "./pages/ProductDetails";
 import Layout from "./components/Layout";
 import AuthLayout from "./components/AuthLayout";
 import { CheckoutLayout } from "./components/CheckoutLayout";
 import { AddressPage } from "./pages/Addresses";
 import { AddressFormPage } from "./pages/AddressForm";
 import { ConfirmationCheckoutPage } from "./pages/ConfirmCheckout";
+import { ProfileSettingsPage } from "./pages/ProfileSettings";
+import { ProfileOrdersPage } from "./pages/ProfileOrders";
+import SettingsLayout from "./components/SettingsLayout";
 
 function App() {
   return (
@@ -20,6 +24,11 @@ function App() {
         {/* Rotas com Layout principal (Header + conteúdo) */}
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
+          <Route path="product/:id" element={<ProductDetailsPage />} />
+          <Route path="profile" element={<SettingsLayout />}>
+            <Route path="settings" element={<ProfileSettingsPage />} />
+            <Route path="orders" element={<ProfileOrdersPage />} />
+          </Route>
         </Route>
         <Route path="/checkout" element={<CheckoutLayout />}>
           <Route index element={<AddressPage />} />
