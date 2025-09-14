@@ -127,15 +127,29 @@ export const mockAddresses: Address[] = [
   {
     id: 1,
     name: "Casa",
-    recipient: "João Silva",
-    address: "Rua das Flores, 123 - Centro - 01234-567",
+    recipient: "Renan Fischer",
+    address: "Rua dos cafundo - Santa Rosa - 98910-000",
     selected: true
   },
   {
     id: 2,
-    name: "Trabalho",
-    recipient: "João Silva",
-    address: "Av. Paulista, 1000 - Bela Vista - 01310-100",
+    name: "Casa",
+    recipient: "Renan Fischer",
+    address: "Rua dos cafundo - Santa Rosa - 98910-000",
+    selected: false
+  },
+  {
+    id: 3,
+    name: "Casa",
+    recipient: "Renan Fischer",
+    address: "Rua dos cafundo - Santa Rosa - 98910-000",
+    selected: false
+  },
+  {
+    id: 4,
+    name: "Casa",
+    recipient: "Renan Fischer",
+    address: "Rua dos cafundo - Santa Rosa - 98910-000",
     selected: false
   }
 ];
