@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { mockProducts } from "../data/mockData";
 import { Button } from "../components/Button";
+import { QuantityAddButton } from "../components/QuantityAddButton";
 
 export const ProductDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -37,20 +38,23 @@ export const ProductDetailsPage = () => {
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Breadcrumb */}
-        <div className="mb-6">
+        <div className="mb-8">
           <button
             onClick={() => navigate("/")}
-            className="text-text-secondary hover:text-primary transition-colors"
+            className="flex items-center text-text-primary hover:text-primary transition-colors font-medium"
           >
-            ← Voltar para produtos
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Voltar
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
           {/* Galeria de Imagens */}
           <div className="space-y-4">
             {/* Imagem Principal */}
-            <div className="bg-items-bg rounded-lg p-6 aspect-square flex items-center justify-center">
+            <div className="bg-items-bg rounded-lg p-8 aspect-square flex items-center justify-center">
               <img
                 src={productImages[selectedImageIndex]}
                 alt={product.name}
@@ -83,161 +87,40 @@ export const ProductDetailsPage = () => {
           </div>
 
           {/* Informações do Produto */}
-          <div className="space-y-6">
-            {/* Categoria e Marca */}
-            <div className="space-y-1">
-              {product.brand && (
-                <p className="text-sm text-text-secondary">{product.brand}</p>
-              )}
-              {product.category && (
-                <p className="text-xs text-primary font-semibold">
-                  {product.category}
-                </p>
-              )}
-            </div>
-
+          <div className="space-y-8">
             {/* Nome do Produto */}
-            <h1 className="text-2xl lg:text-3xl font-bold text-text-primary">
+            <h1 className="text-3xl font-bold text-text-primary leading-tight">
               {product.name}
             </h1>
 
-            {/* Preços */}
+            {/* Preço */}
             <div className="space-y-2">
-              <div className="flex items-center gap-3">
-                <span className="text-3xl font-bold text-primary">
-                  R$ {product.price.toFixed(2).replace(".", ",")}
-                </span>
-                <div className="bg-secondary text-white px-2 py-1 rounded-md text-sm font-semibold">
-                  {product.discount}% OFF
-                </div>
+              <div className="text-4xl font-bold text-primary">
+                R$ {product.price.toFixed(2).replace(".", ",")}
               </div>
-              <p className="text-text-secondary line-through">
-                De: R$ {product.oldPrice.toFixed(2).replace(".", ",")}
-              </p>
             </div>
 
-            {/* Descrição */}
-            {product.description && (
-              <div>
-                <h3 className="text-lg font-semibold text-text-primary mb-2">
-                  Descrição
-                </h3>
-                <p className="text-text-secondary leading-relaxed">
-                  {product.description}
-                </p>
-              </div>
-            )}
-
-            {/* Características */}
-            {product.features && product.features.length > 0 && (
-              <div>
-                <h3 className="text-lg font-semibold text-text-primary mb-3">
-                  Características
-                </h3>
-                <ul className="space-y-2">
-                  {product.features.map((feature, index) => (
-                    <li
-                      key={index}
-                      className="flex items-center text-text-secondary"
-                    >
-                      <span className="w-2 h-2 bg-primary rounded-full mr-3 flex-shrink-0"></span>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Seletor de Quantidade */}
-            <div>
-              <h3 className="text-lg font-semibold text-text-primary mb-3">
-                Quantidade
+            {/* Descrição do Produto */}
+            <div className="space-y-4">
+              <h3 className="text-xl font-semibold text-text-primary">
+                Descrição do Produto
               </h3>
-              <div className="flex items-center space-x-3">
-                <button
-                  onClick={() => handleQuantityChange(-1)}
-                  className="w-10 h-10 bg-items-bg border border-text-secondary rounded-md flex items-center justify-center hover:bg-gray-100 transition-colors"
-                >
-                  -
-                </button>
-                <span className="text-xl font-semibold text-text-primary min-w-[2rem] text-center">
-                  {quantity}
-                </span>
-                <button
-                  onClick={() => handleQuantityChange(1)}
-                  className="w-10 h-10 bg-items-bg border border-text-secondary rounded-md flex items-center justify-center hover:bg-gray-100 transition-colors"
-                >
-                  +
-                </button>
-              </div>
+              <p className="text-text-secondary leading-relaxed">
+                {product.description || "Transforme a aparência e a textura dos seus cabelos com a Água Lamelar Haskell, um tratamento inovador que proporciona maciez e brilho instantâneos. Com uma fórmula leve e de rápida absorção, este produto é ideal para todos os tipos de cabelo, especialmente aqueles que necessitam de um cuidado extra."}
+              </p>
             </div>
 
-            {/* Botões de Ação */}
-            <div className="space-y-3 pt-4">
-              <Button href="/checkout">
-                Comprar Agora - R${" "}
-                {(product.price * quantity).toFixed(2).replace(".", ",")}
-              </Button>
-              <Button variant="outline" onClick={() => console.log("Adicionar ao carrinho")}>
-                Adicionar ao Carrinho
-              </Button>
-            </div>
-
-            {/* Informações de Entrega */}
-            <div className="bg-items-bg rounded-lg p-4 space-y-2">
-              <h4 className="font-semibold text-text-primary">
-                Informações de Entrega
-              </h4>
-              <p className="text-sm text-text-secondary">
-                📦 Entrega grátis para compras acima de R$ 99,00
-              </p>
-              <p className="text-sm text-text-secondary">
-                🚚 Entrega em até 7 dias úteis
-              </p>
-              <p className="text-sm text-text-secondary">
-                🔄 Troca grátis em até 30 dias
-              </p>
+            {/* Botão Integrado com Quantidade */}
+            <div className="space-y-6">
+              <QuantityAddButton
+                quantity={quantity}
+                onQuantityChange={handleQuantityChange}
+                onAdd={() => console.log("Produto adicionado ao carrinho")}
+              />
             </div>
           </div>
         </div>
 
-        {/* Produtos Relacionados */}
-        <div className="mt-12">
-          <h2 className="text-2xl font-bold text-text-primary mb-6">
-            Produtos Relacionados
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {mockProducts
-              .filter((p) => p.id !== product.id && p.category === product.category)
-              .slice(0, 4)
-              .map((relatedProduct) => (
-                <div
-                  key={relatedProduct.id}
-                  className="bg-items-bg rounded-lg p-4 shadow-md cursor-pointer hover:shadow-lg transition-shadow"
-                  onClick={() => navigate(`/product/${relatedProduct.id}`)}
-                >
-                  <div className="aspect-square mb-3 flex items-center justify-center">
-                    <img
-                      src={relatedProduct.image}
-                      alt={relatedProduct.name}
-                      className="max-h-full max-w-full object-contain"
-                    />
-                  </div>
-                  <h3 className="text-sm text-text-primary mb-2 line-clamp-2">
-                    {relatedProduct.name}
-                  </h3>
-                  <div className="flex items-center gap-2">
-                    <span className="text-primary font-bold">
-                      R$ {relatedProduct.price.toFixed(2).replace(".", ",")}
-                    </span>
-                    <span className="text-xs bg-secondary text-white px-1 py-0.5 rounded">
-                      {relatedProduct.discount}% OFF
-                    </span>
-                  </div>
-                </div>
-              ))}
-          </div>
-        </div>
       </div>
     </div>
   );

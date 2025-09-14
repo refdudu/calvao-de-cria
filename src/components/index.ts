@@ -5,5 +5,6 @@ export { ProductCard } from './ProductCard';
 export { ItemsSummary } from './ItemsSummary';
 export { AuthPageWrapper } from './AuthPageWrapper';
 export { Filter } from './Filter';
+export { QuantityAddButton } from './QuantityAddButton';
 export { default as AuthLayout } from './AuthLayout';
 export * from './Icons';
