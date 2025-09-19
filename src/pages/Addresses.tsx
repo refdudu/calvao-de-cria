@@ -6,6 +6,13 @@ import { CheckoutHeader } from "../components/CheckoutHeader";
 import { mockAddresses, mockCartItems } from "../data/mockData";
 import type { Address } from "../types";
 
+import {
+  MapPinIcon,
+  PencilSimpleLineIcon,
+  PenIcon,
+  UserIcon,
+} from "@phosphor-icons/react";
+
 export const AddressPage = () => {
   const navigate = useNavigate();
   const [selectedAddressId, setSelectedAddressId] = useState(
@@ -19,7 +26,7 @@ export const AddressPage = () => {
   return (
     <>
       <h2 className="text-xl font-medium mb-6 flex items-center gap-2 text-text-primary">
-        <LocationIcon className="text-textSecondary w-6 h-6" />
+        <MapPinIcon />
         Escolha um endereço para entregar
       </h2>
 
@@ -35,16 +42,15 @@ export const AddressPage = () => {
           />
         ))}
       </div>
-      <div className="flex gap-4 mt-6">
-        <Button variant="outline" href={`/checkout/address/`}>
+      <div className="flex justify-end gap-4 mt-6">
+        <Button size="small"  variant="outline" href={`/checkout/address/`}>
           Novo endereço
         </Button>
-        <Button href={`/checkout/confirm`}>Continuar</Button>
+        <Button size='small' href={`/checkout/confirm`} >Continuar</Button>
       </div>
     </>
   );
 };
-
 const AddressCard = ({
   address,
   isSelected,
@@ -59,13 +65,13 @@ const AddressCard = ({
   <div className="relative">
     {/* Badge de selecionado */}
     {isSelected && (
-      <div className="absolute -top-2 left-4 bg-primary text-white text-sm font-semibold px-4 py-1 rounded-md z-10">
+      <div className="w-full absolute bg-primary text-white text-sm font-semibold px-4 py-1 z-10 border border-primary">
         Selecionado
       </div>
     )}
 
     <div
-      className={`p-4 rounded-lg border-2 bg-white transition-colors cursor-pointer ${
+      className={`p-4 rounded border-1 h-42 flex flex-col justify-end bg-white transition-colors cursor-pointer ${
         isSelected ? "border-primary" : "border-gray-200 hover:border-primary"
       }`}
       onClick={onSelect}
@@ -92,25 +98,15 @@ const AddressCard = ({
           }}
           className="text-primary hover:text-primary/80 transition-colors"
         >
-          <EditIcon />
+          <PencilSimpleLineIcon />
         </button>
       </div>
 
       <div className="flex items-center gap-2 mb-2">
-        <svg
-          className="w-4 h-4 text-textSecondary"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-          />
-        </svg>
-        <p className="text-sm text-textSecondary">{address.recipient}</p>
+        <UserIcon />
+        <p className="text-sm text-textSecondary font-semibold">
+          {address.recipient}
+        </p>
       </div>
 
       <p className="text-sm text-textSecondary leading-relaxed">

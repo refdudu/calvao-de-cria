@@ -5,32 +5,46 @@ interface ButtonProps {
   onClick?: () => void;
   variant?: "primary" | "secondary" | "outline";
   href?: string;
+  className?: string;
+  size?: "small" | "medium" | "large";
 }
 
 export const Button = ({
   children,
   onClick,
   href,
+  size = "medium",
+  className,
   variant = "primary",
 }: ButtonProps) => {
+  const sizeClasses = {
+    small: "text-sm py-1 px-2 max-w-48 max-h-8",
+    medium: "text-base py-2 px-4",
+    large: "text-lg py-3 px-6",
+  };
+
   const baseClasses =
-    "w-full block text-center py-2.5 rounded-md font-semibold transition-opacity duration-200 hover:opacity-90";
+    "w-full flex items-center justify-center text-center rounded-md font-semibold transition-opacity duration-200 hover:opacity-90";
   const variants = {
     primary: "bg-primary text-white",
     secondary: "bg-secondary text-white",
-    outline: "bg-transparent text-text-secondary border border-text-secondary",
+    outline: "bg-transparent text-secondary border border-secondary",
   };
+
+  const combinedClasses = `${baseClasses} ${sizeClasses[size]} ${
+    variants[variant]
+  } ${className || ""}`.trim();
 
   if (href) {
     return (
-      <Link to={href} className={`${baseClasses} ${variants[variant]}`}>
+      <Link to={href} className={combinedClasses}>
         {children}
       </Link>
     );
   }
 
   return (
-    <button onClick={onClick} className={`${baseClasses} ${variants[variant]}`}>
+    <button onClick={onClick} className={combinedClasses}>
       {children}
     </button>
   );

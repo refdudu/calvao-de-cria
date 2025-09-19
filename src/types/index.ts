@@ -1,15 +1,26 @@
+// export interface Product {
+//   id: number;
+//   name: string;
+//   price: number;
+//   oldPrice: number;
+//   discount: number;
+//   image: string;
+//   description?: string;
+//   features?: string[];
+//   category?: string;
+//   brand?: string;
+//   images?: string[];
+// }
 export interface Product {
-  id: number;
+  id: string;
   name: string;
   price: number;
-  oldPrice: number;
-  discount: number;
-  image: string;
-  description?: string;
-  features?: string[];
-  category?: string;
-  brand?: string;
-  images?: string[];
+  promotionalPrice: number;
+  isPromotionActive: boolean;
+  discountPercentage: number;
+  mainImage: string;
+  rating: number;
+  stockQuantity: number;
 }
 
 export interface CartItem {
