@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import { Button, ChevronLeftIcon, CloseIcon } from ".";
+import { Button } from ".";
 import { mockCartItems } from "../data/mockData";
 import type { CartItem } from "../types";
+import { XIcon } from "@phosphor-icons/react";
 
 export const ShoppingCartDrawer = ({
   isOpen,
@@ -41,13 +42,13 @@ export const ShoppingCartDrawer = ({
               onClick={onClose}
               className="flex items-center gap-2 text-text1 font-semibold cursor-pointer"
             >
-              <ChevronLeftIcon />
+              {/* </> */}
               <span>Voltar</span>
             </button>
           </div>
           <div className="divide-y divide-textSecondary flex-grow bg-background overflow-y-auto p-4">
             {mockCartItems.map((item) => (
-              <ProductItem key={item.id} item={item} />
+              <ProductRowItem key={item.id} item={item} />
             ))}
           </div>
           <div className="p-4 bg-white space-y-4">
@@ -65,7 +66,7 @@ export const ShoppingCartDrawer = ({
   );
 };
 
-export const ProductItem = ({ item }: { item: CartItem }) => {
+export const ProductRowItem = ({ item }: { item: CartItem }) => {
   return (
     <div className="text-text1 flex items-center gap-4 mb-4 pb-4">
       <img
@@ -78,7 +79,7 @@ export const ProductItem = ({ item }: { item: CartItem }) => {
         <div className="flex justify-between items-center">
           <h3 className="text-sm font-medium leading-tight">{item.name}</h3>
           <button className="rounded-full">
-            <CloseIcon />
+            <XIcon />
           </button>
         </div>
 

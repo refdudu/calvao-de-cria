@@ -24,7 +24,7 @@ export const Button = ({
   };
 
   const baseClasses =
-    "w-full flex items-center justify-center text-center rounded-md font-semibold transition-opacity duration-200 hover:opacity-90";
+    "w-full flex items-center justify-center text-center rounded-md transition-opacity duration-200 hover:opacity-90";
   const variants = {
     primary: "bg-primary text-white",
     secondary: "bg-secondary text-white",

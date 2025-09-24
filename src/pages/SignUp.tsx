@@ -1,13 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import {
   AuthPageWrapper,
-  UserIcon,
-  MailIcon,
-  LockIcon,
-  EyeIcon,
+  //   UserIcon,
+  //   MailIcon,
+  //   LockIcon,
+  //   EyeIcon,
   Button,
 } from "../components";
-import { Input } from "../components/Input";
+import { Input, PasswordInput } from "../components/Input";
+import {
+  EnvelopeIcon,
+  EyeIcon,
+  LockIcon,
+  UserIcon,
+} from "@phosphor-icons/react";
 
 export const SignUpPage = () => {
   const navigate = useNavigate();
@@ -20,13 +26,8 @@ export const SignUpPage = () => {
       onSubtitleClick={() => navigate("/auth/login")}
     >
       <Input icon={<UserIcon />} placeholder="Nome de usuário" />
-      <Input icon={<MailIcon />} placeholder="E-mail" type="email" />
-      <Input
-        icon={<LockIcon />}
-        rightIcon={<EyeIcon />}
-        placeholder="Senha"
-        type="password"
-      />
+      <Input icon={<EnvelopeIcon />} placeholder="E-mail" type="email" />
+      <PasswordInput />
       <Button href="/">Criar conta</Button>
     </AuthPageWrapper>
   );

@@ -1,26 +1,16 @@
+import { EyeIcon, LockIcon } from "@phosphor-icons/react";
 import {
   AuthPageWrapper,
   Button,
-  EyeIcon,
   Input,
-  LockIcon,
 } from "../components";
+import { PasswordInput } from "@/components/Input";
 
 export const ResetPasswordPage = () => {
   return (
     <AuthPageWrapper title="Insira sua nova senha">
-      <Input
-        icon={<LockIcon />}
-        rightIcon={<EyeIcon />}
-        placeholder="Nova senha"
-        type="password"
-      />
-      <Input
-        icon={<LockIcon />}
-        rightIcon={<EyeIcon />}
-        placeholder="Confirmar nova senha"
-        type="password"
-      />
+      <PasswordInput/>
+      <PasswordInput placeholder="Confirmar nova senha"/>
       <Button href="/auth/login">Confirmar nova senha</Button>
     </AuthPageWrapper>
   );

@@ -10,21 +10,20 @@ interface PriceRange {
   value: string;
 }
 
+const FILTER_PRICE_RANGES: PriceRange[] = [
+  { label: "Até R$40", value: "0-40" },
+  { label: "R$40 A R$60", value: "40-60" },
+  { label: "R$100 A R$200", value: "100-200" },
+  { label: "R$200 A R$500", value: "200-500" },
+  { label: "Acima de R$500", value: "500+" },
+];
 export const Filter = ({ selectedPrice, onPriceChange }: FilterProps) => {
-  const PRICE_RANGES: PriceRange[] = [
-    { label: "Até R$40", value: "0-40" },
-    { label: "R$40 A R$60", value: "40-60" },
-    { label: "R$100 A R$200", value: "100-200" },
-    { label: "R$200 A R$500", value: "200-500" },
-    { label: "Acima de R$500", value: "500+" },
-  ];
-
   return (
     <div className="hidden md:flex flex-col gap-4">
       <span className="text-xl">Refine sua busca</span>
       <span className="text-lg">Por preço</span>
       <div className="flex flex-col gap-2">
-        {PRICE_RANGES.map((item) => (
+        {FILTER_PRICE_RANGES.map((item) => (
           <Radio
             key={item.value}
             label={item.label}

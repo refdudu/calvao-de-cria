@@ -1,15 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { EditIcon, LocationIcon, Button } from "../components";
-import { ItemsSummary } from "../components";
-import { CheckoutHeader } from "../components/CheckoutHeader";
-import { mockAddresses, mockCartItems } from "../data/mockData";
+import { Button } from "../components";
+import { mockAddresses } from "../data/mockData";
 import type { Address } from "../types";
 
 import {
   MapPinIcon,
   PencilSimpleLineIcon,
-  PenIcon,
   UserIcon,
 } from "@phosphor-icons/react";
 
@@ -43,10 +40,12 @@ export const AddressPage = () => {
         ))}
       </div>
       <div className="flex justify-end gap-4 mt-6">
-        <Button size="small"  variant="outline" href={`/checkout/address/`}>
+        <Button size="small" variant="outline" href={`/checkout/address/`}>
           Novo endereço
         </Button>
-        <Button size='small' href={`/checkout/confirm`} >Continuar</Button>
+        <Button size="small" href={`/checkout/confirm`}>
+          Continuar
+        </Button>
       </div>
     </>
   );

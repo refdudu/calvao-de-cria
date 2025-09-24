@@ -2,7 +2,7 @@ export { Input } from './Input';
 export { Button } from './Button';
 export { Radio } from './Radio';
 export { ProductCard } from './ProductCard';
-export { ItemsSummary } from './ItemsSummary';
+export { ItemsSummary } from './Checkout/ItemsSummary';
 export { AuthPageWrapper } from './AuthPageWrapper';
 export { Filter } from './Filter';
 export { QuantityAddButton } from './QuantityAddButton';

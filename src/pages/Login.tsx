@@ -1,23 +1,20 @@
+import { EyeIcon, LockKeyIcon, UserIcon } from "@phosphor-icons/react";
 import {
   AuthPageWrapper,
   Input,
-  UserIcon,
-  LockIcon,
-  EyeIcon,
+  //   UserIcon,
+  //   LockIcon,
+  //   EyeIcon,
   Button,
 } from "../components";
 import { Link } from "react-router-dom";
+import { PasswordInput } from "@/components/Input";
 
 export const LoginPage = () => {
   return (
     <AuthPageWrapper title="Entrar na sua conta">
       <Input icon={<UserIcon />} placeholder="Usuário" />
-      <Input
-        icon={<LockIcon />}
-        rightIcon={<EyeIcon />}
-        placeholder="Senha"
-        type="password"
-      />
+      <PasswordInput />
       <Button href="/">Entrar</Button>
       <div className="text-center">
         <Link

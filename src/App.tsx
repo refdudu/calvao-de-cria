@@ -9,7 +9,7 @@ import { PixPaymentPage } from "./pages/PixPayment";
 import { ProductDetailsPage } from "./pages/ProductDetails";
 import Layout from "./components/Layout";
 import AuthLayout from "./components/AuthLayout";
-import { CheckoutLayout } from "./components/CheckoutLayout";
+import { CheckoutLayout } from "./components/Checkout/CheckoutLayout";
 import { AddressPage } from "./pages/Addresses";
 import { AddressFormPage } from "./pages/AddressForm";
 import { ConfirmationCheckoutPage } from "./pages/ConfirmCheckout";

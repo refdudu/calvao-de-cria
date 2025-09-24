@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import "react-drawer/lib/react-drawer.css";
 import { CheckoutHeader } from "./CheckoutHeader";
 import { ItemsSummary } from "./ItemsSummary";
-import { mockCartItems } from "../data/mockData";
+import { mockCartItems } from "../../data/mockData";
 
 export const CheckoutLayout = () => {
   return (

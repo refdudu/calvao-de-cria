@@ -3,48 +3,58 @@ import { Filter } from "../components/Filter";
 import { Link } from "react-router-dom";
 import { api } from "@/utils/api";
 import type { Product } from "@/types";
+import { Pagination } from "@/components/Pagination";
+import type { IListProductResponse } from "@/types/IResponse";
 
 export const Home = () => {
   //   const [cats, setCats] = useState<string[]>([]);
   const [selectedPrice, setSelectedPrice] = useState<string>("");
-  const [products, setProducts] = useState<Product[]>([]);
+  //   const [products, setProducts] = useState<Product[]>([]);
+  const [productDetails, setProductDetails] = useState<IListProductResponse>();
+  const [isLoading, setIsLoading] = useState(true);
 
   const getProducts = async () => {
-    const {
-      data: { data },
-    } = await api.get("products");
-    console.log("🚀 ~ getProducts ~ data:", data);
-    // const data = await response.json();
-
-    setProducts(data);
+    setIsLoading(true);
+    try {
+      const { data } = await api.get<IListProductResponse>("products");
+      console.log("🚀 ~ getProducts ~ data:", data);
+      setProductDetails(data);
+    } catch {}
+    setIsLoading(false);
   };
   useEffect(() => {
-    // const main = async () => {
-    //   const promises = Array.from({ length: 9 }, async () => {
-    //     const response = await fetch("https://cataas.com/cat?json=true");
-    //     const data = await response.json();
-    //     console.log("🚀 ~ main ~ data:", data);
-    //     return data.url;
-    //   });
-    //   setCats(await Promise.all(promises));
-    // };
-    // main();
     getProducts();
-  }, []);
+  }, [selectedPrice]);
 
   return (
     <div className="flex gap-16 ">
       <Filter selectedPrice={selectedPrice} onPriceChange={setSelectedPrice} />
       <div className="flex flex-col flex-1 gap-6">
-        <span>
-          <b className="font-bold">29</b> produtos encontrados
-        </span>
+        {isLoading ? (
+          <>Carregando...</>
+        ) : productDetails ? (
+          <>
+            <span>
+              <b className="font-bold">{productDetails?.data?.length || 0}</b>{" "}
+              produtos encontrados
+            </span>
 
-        <div className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 grid flex-1">
-          {products.map((product) => (
-            <ListProductCard key={product.id} {...{ product }} />
-          ))}
-        </div>
+            <div className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 grid flex-1">
+              {productDetails?.data?.map((product) => (
+                <ListProductCard key={product.id} {...{ product }} />
+              ))}
+            </div>
+            <div className="max-w-[500px] w-full self-center">
+              <Pagination
+                changePageIndex={(page) => console.log(page)}
+                current={1}
+                total={3}
+              />
+            </div>
+          </>
+        ) : (
+          <>Nenhum produto encontrado</>
+        )}
       </div>
     </div>
   );

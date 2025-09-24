@@ -24,7 +24,7 @@ const Layout = () => {
         <Header toggleDrawer={toggleDrawer} />
 
         {/* Main Content */}
-        <main className="h-[calc(100vh-4rem)] overflow-auto flex-1">
+        <main className="h-[calc(100vh-4rem)] overflow-y-auto flex-1">
           <div className="max-w-7xl mx-auto py-12">
             <Outlet />
           </div>
