@@ -4,9 +4,24 @@ import Logo from "../assets/Logo.svg";
 import ShoppingCartIcon from "../assets/ShoppingCart.svg";
 import UserIcon from "../assets/User.svg";
 import { LogoIcon } from "./LogoIcon";
+import { useAuth } from "../contexts/AuthContext";
+import { useCart } from "../contexts/CartContext";
 
 export const Header = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
   const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
+  const { cart } = useCart();
+
+  // Calcular total de itens no carrinho
+  const cartItemsCount = cart?.items?.reduce((total, item) => total + item.quantity, 0) || 0;
+
+  const handleUserIconClick = () => {
+    if (isAuthenticated) {
+      navigate("/profile/settings");
+    } else {
+      navigate("/auth/login");
+    }
+  };
 
   return (
     <div className="p-4 w-full h-16 bg-primary shadow-md flex justify-center">
@@ -16,13 +31,23 @@ export const Header = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
             <LogoIcon />
           </Link>
         </div>
-        <Tabs />
-        <div className="flex gap-4">
-          <button onClick={() => navigate("/auth/login")}>
+        <div className="flex items-center gap-6">
+          <Tabs />
+        </div>
+        <div className="flex gap-4 items-center">
+          <button onClick={handleUserIconClick} className="relative">
             <img className="h-10" src={UserIcon} alt="User" />
+            {isAuthenticated && user && (
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-secondary rounded-full"></div>
+            )}
           </button>
-          <button onClick={toggleDrawer}>
+          <button onClick={toggleDrawer} className="relative">
             <img className="h-10" src={ShoppingCartIcon} alt="Cart" />
+            {cartItemsCount > 0 && (
+              <div className="absolute -top-2 -right-2 bg-secondary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                {cartItemsCount > 9 ? '9+' : cartItemsCount}
+              </div>
+            )}
           </button>
         </div>
       </div>
@@ -87,3 +112,4 @@ function Tabs() {
     </div>
   );
 }
+

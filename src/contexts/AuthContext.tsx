@@ -1,7 +1,17 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import type { ReactNode } from 'react';
-import type { User, AuthContextType, LoginData, RegisterData, ForgotPasswordData, ResetPasswordData } from '../types';
-import { authService, setAuthToken } from '../services/authService';
+import React, { createContext, useContext, useEffect, useState } from "react";
+import type { ReactNode } from "react";
+import type {
+  User,
+  AuthContextType,
+  LoginData,
+  RegisterData,
+  ForgotPasswordData,
+  ResetPasswordData,
+  AuthResponse,
+} from "../types";
+import { authService, setAuthToken } from "../services/authService";
+import { api } from "@/utils/api";
+import { cookieUtils, AUTH_COOKIE_KEYS, COOKIE_EXPIRY } from "../utils/cookieUtils";
 
 // Contexto de autenticação
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -10,7 +20,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth deve ser usado dentro de um AuthProvider');
+    throw new Error("useAuth deve ser usado dentro de um AuthProvider");
   }
   return context;
 };
@@ -20,35 +30,32 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-// Chaves do localStorage
-const STORAGE_KEYS = {
-  ACCESS_TOKEN: 'access_token',
-  REFRESH_TOKEN: 'refresh_token',
-  USER: 'user'
-};
+
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Função para salvar tokens no localStorage
+  // Função para salvar tokens nos cookies
   const saveTokens = (accessToken: string, refreshToken: string) => {
-    localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
-    localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
+    cookieUtils.set(AUTH_COOKIE_KEYS.ACCESS_TOKEN, accessToken, COOKIE_EXPIRY.ACCESS_TOKEN);
+    cookieUtils.set(AUTH_COOKIE_KEYS.REFRESH_TOKEN, refreshToken, COOKIE_EXPIRY.REFRESH_TOKEN);
     setAuthToken(accessToken);
   };
 
-  // Função para remover tokens do localStorage
+  // Função para remover tokens dos cookies
   const clearTokens = () => {
-    localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
-    localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
-    localStorage.removeItem(STORAGE_KEYS.USER);
+    cookieUtils.removeMultiple([
+      AUTH_COOKIE_KEYS.ACCESS_TOKEN,
+      AUTH_COOKIE_KEYS.REFRESH_TOKEN,
+      AUTH_COOKIE_KEYS.USER
+    ]);
     setAuthToken(null);
   };
 
-  // Função para salvar usuário no localStorage
+  // Função para salvar usuário nos cookies
   const saveUser = (userData: User) => {
-    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(userData));
+    cookieUtils.set(AUTH_COOKIE_KEYS.USER, JSON.stringify(userData), COOKIE_EXPIRY.USER);
     setUser(userData);
   };
 
@@ -57,13 +64,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       const response = await authService.login(data);
-      
-      const { user: userData, tokens } = response.data;
-      
+      console.log("🚀 ~ login ~ response:", response.data);
+
+      api.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${response.data.tokens.accessToken}`;
+      const { tokens } = response.data;
+
       saveTokens(tokens.accessToken, tokens.refreshToken);
-      saveUser(userData);
+      const user = await authService.getCurrentUser();
+      saveUser(user);
     } catch (error) {
-      console.error('Erro no login:', error);
+      console.error("Erro no login:", error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -75,13 +87,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       const response = await authService.register(data);
-      
-      const { user: userData, tokens } = response.data;
-      
+
+      const { tokens } = response.data;
+
       saveTokens(tokens.accessToken, tokens.refreshToken);
-      saveUser(userData);
+      //   saveUser(userData);
     } catch (error) {
-      console.error('Erro no registro:', error);
+      console.error("Erro no registro:", error);
       throw error;
     } finally {
       setIsLoading(false);
@@ -95,7 +107,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         await authService.logout(user.id);
       }
     } catch (error) {
-      console.error('Erro no logout:', error);
+      console.error("Erro no logout:", error);
     } finally {
       clearTokens();
       setUser(null);
@@ -107,7 +119,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       await authService.forgotPassword(data);
     } catch (error) {
-      console.error('Erro ao solicitar redefinição de senha:', error);
+      console.error("Erro ao solicitar redefinição de senha:", error);
       throw error;
     }
   };
@@ -117,7 +129,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       await authService.resetPassword(data);
     } catch (error) {
-      console.error('Erro ao redefinir senha:', error);
+      console.error("Erro ao redefinir senha:", error);
       throw error;
     }
   };
@@ -125,52 +137,64 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Função para atualizar token
   const refreshToken = async (): Promise<boolean> => {
     try {
-      const storedRefreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
-      
+      const storedRefreshToken = cookieUtils.get(AUTH_COOKIE_KEYS.REFRESH_TOKEN);
+
       if (!storedRefreshToken) {
         return false;
       }
 
       const response = await authService.refreshToken(storedRefreshToken);
       const newAccessToken = response.accessToken;
-      
-      localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, newAccessToken);
+
+      cookieUtils.set(AUTH_COOKIE_KEYS.ACCESS_TOKEN, newAccessToken, COOKIE_EXPIRY.ACCESS_TOKEN);
       setAuthToken(newAccessToken);
-      
+
       return true;
     } catch (error) {
-      console.error('Erro ao atualizar token:', error);
+      console.error("Erro ao atualizar token:", error);
       clearTokens();
       setUser(null);
       return false;
     }
   };
 
-  // Função para carregar usuário do localStorage
-  const loadUserFromStorage = async () => {
+  // Função para carregar usuário dos cookies
+  const loadUserFromCookies = async () => {
     try {
-      const storedUser = localStorage.getItem(STORAGE_KEYS.USER);
-      const storedAccessToken = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+      const storedUser = cookieUtils.get(AUTH_COOKIE_KEYS.USER);
+      const storedAccessToken = cookieUtils.get(AUTH_COOKIE_KEYS.ACCESS_TOKEN);
 
       if (storedUser && storedAccessToken) {
-        setAuthToken(storedAccessToken);
-        setUser(JSON.parse(storedUser));
-        
-        // Opcional: verificar se o token ainda é válido fazendo uma requisição
         try {
-          const currentUser = await authService.getCurrentUser();
-          saveUser(currentUser);
-        } catch (error) {
-          // Token inválido, tentar refresh
-          const refreshed = await refreshToken();
-          if (!refreshed) {
-            clearTokens();
-            setUser(null);
+          // Tentar fazer parse do usuário armazenado
+          const parsedUser = JSON.parse(storedUser);
+          setAuthToken(storedAccessToken);
+          setUser(parsedUser);
+
+          // Verificar se o token ainda é válido fazendo uma requisição
+          try {
+            const currentUser = await authService.getCurrentUser();
+            saveUser(currentUser);
+          } catch (error) {
+            console.warn("Token inválido, tentando refresh...");
+            // Token inválido, tentar refresh
+            const refreshed = await refreshToken();
+            if (!refreshed) {
+              console.warn("Refresh token também inválido, fazendo logout...");
+              clearTokens();
+              setUser(null);
+            }
           }
+        } catch (parseError) {
+          console.error("Erro ao fazer parse dos dados do usuário:", parseError);
+          clearTokens();
+          setUser(null);
         }
+      } else {
+        console.log("Nenhum usuário ou token encontrado nos cookies");
       }
     } catch (error) {
-      console.error('Erro ao carregar usuário:', error);
+      console.error("Erro ao carregar usuário dos cookies:", error);
       clearTokens();
       setUser(null);
     } finally {
@@ -180,14 +204,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Carregar usuário quando o componente monta
   useEffect(() => {
-    loadUserFromStorage();
+    loadUserFromCookies();
   }, []);
 
   // Interceptador para refresh automático de token (pode ser implementado futuramente)
   useEffect(() => {
     // Aqui você pode adicionar um interceptador do axios para refresh automático
     // quando receber 401 Unauthorized
-    
+
     return () => {
       // Cleanup se necessário
     };
@@ -204,9 +228,5 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     resetPassword,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

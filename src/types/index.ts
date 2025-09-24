@@ -14,21 +14,36 @@
 export interface Product {
   id: string;
   name: string;
+  description?: string;
   price: number;
-  promotionalPrice: number;
+  promotionalPrice?: number;
   isPromotionActive: boolean;
-  discountPercentage: number;
+  discountPercentage?: number;
   mainImage: string;
+  images?: string[];
   rating: number;
   stockQuantity: number;
+  category?: string;
+  brand?: string;
 }
 
 export interface CartItem {
-  id: number;
+  mainImageUrl: string;
   name: string;
   price: number;
+  productId: string;
+  promotionalPrice: number;
   quantity: number;
-  image: string;
+  totalItemPrice: number;
+  unitPrice: number;
+}
+
+export interface Cart {
+  items: CartItem[];
+  totalItems: number;
+  subtotal: number;
+  total: number;
+  guestCartId?: string;
 }
 
 export interface Address {
@@ -65,10 +80,13 @@ export interface AuthTokens {
 
 export interface AuthResponse {
   status: string;
-  data: {
-    user: User;
-    tokens: AuthTokens;
-  };
+  data: AuthResponseData;
+}
+export interface AuthResponseData {
+  email: string;
+  name: string;
+  userId: string;
+  tokens: AuthTokens;
 }
 
 export interface RegisterData {
@@ -107,8 +125,53 @@ export interface AuthContextType {
   resetPassword: (data: ResetPasswordData) => Promise<void>;
 }
 
+// Product Search & Filter Types
+export interface ProductFilters {
+  search?: string;
+  inPromotion?: boolean;
+  minPrice?: number;
+  maxPrice?: number;
+  page?: number;
+  limit?: number;
+  sortBy?: "price" | "name" | "rating";
+  order?: "asc" | "desc";
+}
+
+export interface ProductsResponse {
+  data: Product[];
+  pagination?: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+}
+
+// Cart Types
+export interface AddToCartData {
+  productId: string;
+  quantity: number;
+}
+
+export interface UpdateCartItemData {
+  quantity: number;
+}
+
+export interface CartContextType {
+  cart: Cart | null;
+  isLoading: boolean;
+  addToCart: (data: AddToCartData) => Promise<void>;
+  updateCartItem: (
+    productId: string,
+    data: UpdateCartItemData
+  ) => Promise<void>;
+  removeFromCart: (productId: string) => Promise<void>;
+  getCart: () => Promise<void>;
+  clearCart: () => void;
+}
+
 export interface ItemsSummaryProps {
   items: CartItem[];
   showHeader?: boolean;
 }
-

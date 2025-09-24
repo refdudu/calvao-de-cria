@@ -17,11 +17,13 @@ import { ProfileSettingsPage } from "./pages/ProfileSettings";
 import { ProfileOrdersPage } from "./pages/ProfileOrders";
 import SettingsLayout from "./components/SettingsLayout";
 import { AuthProvider } from "./contexts/AuthContext";
+import { CartProvider } from "./contexts/CartContext";
 
 function App() {
   return (
     <AuthProvider>
-      <Router>
+      <CartProvider>
+        <Router>
       <Routes>
         {/* Rotas com Layout principal (Header + conteúdo) */}
         <Route path="/" element={<Layout />}>
@@ -52,7 +54,8 @@ function App() {
           <Route path="pix" element={<PixPaymentPage />} />
         </Route>
       </Routes>
-      </Router>
+        </Router>
+      </CartProvider>
     </AuthProvider>
   );
 }

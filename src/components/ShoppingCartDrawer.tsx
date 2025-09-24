@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from ".";
-import { mockCartItems } from "../data/mockData";
 import type { CartItem } from "../types";
 import { XIcon } from "@phosphor-icons/react";
+import { useCart } from "../contexts/CartContext";
+import { useAuth } from "../contexts/AuthContext";
 
 export const ShoppingCartDrawer = ({
   isOpen,
@@ -12,12 +13,24 @@ export const ShoppingCartDrawer = ({
   onClose: () => void;
 }) => {
   const navigate = useNavigate();
-  const total = mockCartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
+  const { cart, updateCartItem, removeFromCart } = useCart();
+  console.log("🚀 ~ ShoppingCartDrawer ~ cart:", cart)
+  const { isAuthenticated } = useAuth();
+
+  // Calcular total do carrinho
+  const total = cart?.items?.reduce(
+    (acc: number, item: CartItem) => acc + item.totalItemPrice,
     0
-  );
+  ) || 0;
+
+  const cartItems = cart?.items || [];
 
   const handleCheckout = () => {
+    if (!isAuthenticated) {
+      navigate("/auth/login");
+      onClose();
+      return;
+    }
     navigate("/checkout");
     onClose();
   };
@@ -47,9 +60,21 @@ export const ShoppingCartDrawer = ({
             </button>
           </div>
           <div className="divide-y divide-textSecondary flex-grow bg-background overflow-y-auto p-4">
-            {mockCartItems.map((item) => (
-              <ProductRowItem key={item.id} item={item} />
-            ))}
+            {cartItems.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full text-textSecondary">
+                <p className="text-lg mb-2">Seu carrinho está vazio</p>
+                <p className="text-sm">Adicione produtos para continuar</p>
+              </div>
+            ) : (
+              cartItems.map((item: CartItem) => (
+                <ProductRowItem 
+                  key={item.productId} 
+                  item={item}
+                  onUpdateQuantity={updateCartItem}
+                  onRemove={removeFromCart}
+                />
+              ))
+            )}
           </div>
           <div className="p-4 bg-white space-y-4">
             <div className="flex justify-between items-center">
@@ -66,11 +91,29 @@ export const ShoppingCartDrawer = ({
   );
 };
 
-export const ProductRowItem = ({ item }: { item: CartItem }) => {
+interface ProductRowItemProps {
+  item: CartItem;
+  onUpdateQuantity: (productId: string, data: { quantity: number }) => Promise<void>;
+  onRemove: (productId: string) => Promise<void>;
+}
+
+export const ProductRowItem = ({ item, onUpdateQuantity, onRemove }: ProductRowItemProps) => {
+  const handleQuantityChange = async (newQuantity: number) => {
+    if (newQuantity <= 0) {
+      await onRemove(item.productId);
+    } else {
+      await onUpdateQuantity(item.productId, { quantity: newQuantity });
+    }
+  };
+
+  const handleRemove = async () => {
+    await onRemove(item.productId);
+  };
+
   return (
     <div className="text-text1 flex items-center gap-4 mb-4 pb-4">
       <img
-        src={item.image}
+        src={item.mainImageUrl}
         alt={item.name}
         className="w-16 h-16 object-contain rounded-md"
       />
@@ -78,31 +121,53 @@ export const ProductRowItem = ({ item }: { item: CartItem }) => {
       <div className="flex-grow flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <h3 className="text-sm font-medium leading-tight">{item.name}</h3>
-          <button className="rounded-full">
+          <button className="rounded-full" onClick={handleRemove}>
             <XIcon />
           </button>
         </div>
 
         <div className="flex items-center justify-between">
-          <Counter />
+          <Counter 
+            quantity={item.quantity}
+            onQuantityChange={handleQuantityChange}
+          />
           <span className="text-lg font-bold text-primary">
-            R$ {item.price.toFixed(2).replace(".", ",")}
+            R$ {item.totalItemPrice.toFixed(2).replace(".", ",")}
           </span>
         </div>
       </div>
     </div>
   );
 };
-const Counter = () => {
+interface CounterProps {
+  quantity: number;
+  onQuantityChange: (newQuantity: number) => void;
+}
+
+const Counter = ({ quantity, onQuantityChange }: CounterProps) => {
+  const handleDecrease = () => {
+    onQuantityChange(quantity - 1);
+  };
+
+  const handleIncrease = () => {
+    onQuantityChange(quantity + 1);
+  };
+
   return (
     <div className="flex items-center border w-24 justify-center border-text1 rounded px-1 bg-white">
-      <button className="h-5 w-5 rounded-full hover:bg-background transition-color flex items-center justify-center">
+      <button 
+        onClick={handleDecrease}
+        className="h-5 w-5 rounded-full hover:bg-background transition-color flex items-center justify-center"
+      >
         −
       </button>
       <span className="px-3 py-1 text-sm font-medium min-w-[2rem] text-center">
-        {/* {item.quantity} */}9
+        {quantity}
       </span>
-      <button className="h-5 w-5 rounded-full hover:bg-background transition-color flex items-center justify-center">
+      <button 
+        onClick={handleIncrease}
+        className="h-5 w-5 rounded-full hover:bg-background transition-color flex items-center justify-center"
+      >
         +
       </button>
     </div>

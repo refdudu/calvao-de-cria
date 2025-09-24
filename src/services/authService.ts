@@ -59,6 +59,6 @@ export const authService = {
   // Buscar dados do usuário atual
   getCurrentUser: async (): Promise<User> => {
     const response = await api.get('/users/me');
-    return response.data.data.user;
+    return response.data;
   }
 };
