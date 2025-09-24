@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import Logo from "../assets/Logo.svg";
 import ShoppingCartIcon from "../assets/ShoppingCart.svg";
 import UserIcon from "../assets/User.svg";
+import { LogoIcon } from "./LogoIcon";
 
 export const Header = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ export const Header = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
       <div className="w-full max-w-7xl flex justify-between items-center">
         <div>
           <Link to="/">
-            <img src={Logo} alt="Logo" className="cursor-pointer" />
+            <LogoIcon />
           </Link>
         </div>
         <Tabs />

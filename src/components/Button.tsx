@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-interface ButtonProps {
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   onClick?: () => void;
   variant?: "primary" | "secondary" | "outline";
@@ -16,6 +16,7 @@ export const Button = ({
   size = "medium",
   className,
   variant = "primary",
+  ...props
 }: ButtonProps) => {
   const sizeClasses = {
     small: "text-sm py-1 px-2 max-w-48 max-h-8",
@@ -44,7 +45,7 @@ export const Button = ({
   }
 
   return (
-    <button onClick={onClick} className={combinedClasses}>
+    <button onClick={onClick} className={combinedClasses} {...props}>
       {children}
     </button>
   );

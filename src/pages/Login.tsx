@@ -1,21 +1,98 @@
-import { EyeIcon, LockKeyIcon, UserIcon } from "@phosphor-icons/react";
+import { UserIcon, LockIcon } from "@phosphor-icons/react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import {
   AuthPageWrapper,
   Input,
-  //   UserIcon,
-  //   LockIcon,
-  //   EyeIcon,
   Button,
+  FormInput,
 } from "../components";
-import { Link } from "react-router-dom";
-import { PasswordInput } from "@/components/Input";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import type { LoginData } from "../types";
 
 export const LoginPage = () => {
+  const { login, isLoading } = useAuth();
+  const navigate = useNavigate();
+  const [error, setError] = useState<string>("");
+  
+  const { 
+    register, 
+    handleSubmit, 
+    formState: { errors }
+  } = useForm<LoginData>({
+    defaultValues: {
+      email: "",
+      password: ""
+    }
+  });
+
+  const onSubmit = async (data: LoginData) => {
+    setError("");
+    
+    try {
+      await login(data);
+      navigate("/"); // Redireciona para home após login
+    } catch (error) {
+      console.error("Erro no login:", error);
+      setError("Email ou senha incorretos. Tente novamente.");
+    }
+  };
+
   return (
     <AuthPageWrapper title="Entrar na sua conta">
-      <Input icon={<UserIcon />} placeholder="Usuário" />
-      <PasswordInput />
-      <Button href="/">Entrar</Button>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        {error && (
+          <div className="text-red-500 text-sm text-center bg-red-50 p-2 rounded">
+            {error}
+          </div>
+        )}
+        
+        <FormInput
+          error={errors.email?.message}
+          Input={
+            <Input 
+              icon={<UserIcon />} 
+              placeholder="E-mail" 
+              type="email"
+              {...register("email", {
+                required: "E-mail é obrigatório",
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: "E-mail inválido"
+                }
+              })}
+            />
+          }
+        />
+        
+        <FormInput
+          error={errors.password?.message}
+          Input={
+            <Input
+              icon={<LockIcon />}
+              placeholder="Senha"
+              type="password"
+              {...register("password", {
+                required: "Senha é obrigatória",
+                minLength: {
+                  value: 6,
+                  message: "Senha deve ter pelo menos 6 caracteres"
+                }
+              })}
+            />
+          }
+        />
+        
+        <Button 
+          type="submit" 
+          disabled={isLoading}
+          className="w-full"
+        >
+          {isLoading ? "Entrando..." : "Entrar"}
+        </Button>
+      </form>
+      
       <div className="text-center">
         <Link
           to="/auth/forgot-password"
@@ -24,6 +101,7 @@ export const LoginPage = () => {
           Esqueci minha senha
         </Link>
       </div>
+      
       <div className="text-center mt-4">
         <p className="text-textSecondary text-sm mb-2">
           Ainda não tem uma conta?

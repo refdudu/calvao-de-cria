@@ -16,10 +16,12 @@ import { ConfirmationCheckoutPage } from "./pages/ConfirmCheckout";
 import { ProfileSettingsPage } from "./pages/ProfileSettings";
 import { ProfileOrdersPage } from "./pages/ProfileOrders";
 import SettingsLayout from "./components/SettingsLayout";
+import { AuthProvider } from "./contexts/AuthContext";
 
 function App() {
   return (
-    <Router>
+    <AuthProvider>
+      <Router>
       <Routes>
         {/* Rotas com Layout principal (Header + conteúdo) */}
         <Route path="/" element={<Layout />}>
@@ -50,7 +52,8 @@ function App() {
           <Route path="pix" element={<PixPaymentPage />} />
         </Route>
       </Routes>
-    </Router>
+      </Router>
+    </AuthProvider>
   );
 }
 

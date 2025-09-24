@@ -30,9 +30,9 @@ const OrderCard = () => (
       </div>
       <div>
         <h3 className="text-sm text-text-secondary">Endereço de entrega</h3>
-        <a href="#" className="font-semibold text-primary underline">
+        {/* <a href="#" className="font-semibold text-primary underline">
           UNIJUI
-        </a>
+        </a> */}
       </div>
     </div>
     <h4 className="font-semibold text-text-primary mb-2">Itens do pedido</h4>

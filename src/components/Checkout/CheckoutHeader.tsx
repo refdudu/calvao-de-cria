@@ -1,5 +1,7 @@
 import { CreditCardIcon, MapPinAreaIcon } from "@phosphor-icons/react";
 import { useLocation } from "react-router-dom";
+import { LogoIcon } from "../LogoIcon";
+import { Link } from "react-router-dom";
 
 export const CheckoutHeader = () => {
   const location = useLocation();
@@ -22,13 +24,24 @@ export const CheckoutHeader = () => {
   const step = getStep();
 
   return (
-    <div className="w-full h-16 bg-primary shadow-md flex gap-4 justify-center items-center">
-      <div className="flex items-center gap-4 text-white font-semibold">
-        <Step isActive={step >= 1} icon={MapPinAreaIcon} label="ENDEREÇO" />
-      </div>
-      <span className="text-gray-300">{">"}</span>
-      <div className="flex items-center gap-2">
-        <Step isActive={step >= 2} icon={CreditCardIcon} label="PAGAMENTO" />
+    <div className=" w-full h-16  bg-primary shadow-md flex gap-4 justify-center items-center">
+      <div className="flex relative max-w-7xl w-full items-center gap-4">
+        <Link className="absolute" to="/">
+          <LogoIcon />
+        </Link>
+        <div className="flex flex-1 justify-center items-center gap-4">
+          <div className="flex items-center gap-4 text-white font-semibold">
+            <Step isActive={step >= 1} icon={MapPinAreaIcon} label="ENDEREÇO" />
+          </div>
+          <span className="text-gray-300">{">"}</span>
+          <div className="flex items-center gap-2">
+            <Step
+              isActive={step >= 2}
+              icon={CreditCardIcon}
+              label="PAGAMENTO"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -7,4 +7,5 @@ export { AuthPageWrapper } from './AuthPageWrapper';
 export { Filter } from './Filter';
 export { QuantityAddButton } from './QuantityAddButton';
 export { default as AuthLayout } from './AuthLayout';
+export { FormInput } from './FormInput';
 export * from './Icons';
