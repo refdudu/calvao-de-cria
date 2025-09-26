@@ -1,0 +1,352 @@
+# Documentação da API - Calvão de Cria
+
+Esta documentação detalha os endpoints disponíveis na API, com base na collection do Postman "Calvão de cria". A API é dividida em módulos principais: Autenticação, Administração, Usuários, Produtos, Carrinho e Checkout.
+
+**Variáveis de Ambiente:**
+
+  * `{{Host}}`: URL base da API.
+  * `{{accessToken}}` / `{{accessTokenAdmin}}`: Token de autenticação JWT obtido após o login.
+  * `{{refreshToken}}` / `{{refreshTokenAdmin}}`: Token para renovar o `accessToken`.
+
+-----
+
+## 1\. Módulo de Autenticação (`/auth`)
+
+Endpoints responsáveis pelo registro, login e gerenciamento de sessões de usuários.
+
+### **1.1. Registrar Novo Usuário**
+
+Cria um novo usuário na plataforma.
+
+  * **Método:** `POST`
+  * **Endpoint:** `{{Host}}/auth/register`
+  * **Corpo da Requisição (JSON):**
+    ```json
+    {
+      "name": "teste",
+      "email": "{{$randomUserName}}@teste.com",
+      "cpf": "{{cpf}}",
+      "birthDate": "1995-12-22",
+      "phone": "11987654321",
+      "password": "Renan123!",
+      "passwordConfirm": "Renan123!"
+    }
+    ```
+  * **Resposta (Sucesso):** Retorna os tokens de acesso (`accessToken`, `refreshToken`) e os dados do usuário criado.
+
+### **1.2. Fazer Login**
+
+Autentica um usuário e retorna os tokens de acesso.
+
+  * **Método:** `POST`
+  * **Endpoint:** `{{Host}}/auth/login`
+  * **Corpo da Requisição (JSON):**
+    ```json
+    {
+        "email": "usuario@teste.com",
+        "password": "Password123!"
+    }
+    ```
+  * **Nota:** Este endpoint é usado tanto para usuários comuns quanto para administradores (com credenciais diferentes).
+
+### **1.3. Fazer Logout**
+
+Invalida o token de acesso do usuário.
+
+  * **Método:** `POST`
+  * **Endpoint:** `{{Host}}/auth/logout`
+  * **Header:**
+      * `Authorization`: `Bearer {{accessToken}}`
+
+### **1.4. Renovar Token de Acesso**
+
+Gera um novo `accessToken` a partir de um `refreshToken` válido.
+
+  * **Método:** `POST`
+  * **Endpoint:** `{{Host}}/auth/refresh`
+  * **Corpo da Requisição (JSON):**
+    ```json
+    {
+        "refreshToken": "{{refreshToken}}"
+    }
+    ```
+
+### **1.5. Esqueci Minha Senha**
+
+Inicia o fluxo de redefinição de senha.
+
+  * **Método:** `POST`
+  * **Endpoint:** `{{Host}}/auth/forgot-password`
+  * **Corpo da Requisição (JSON):**
+    ```json
+    {
+        "email": "usuario@teste.com"
+    }
+    ```
+
+### **1.6. Redefinir Senha**
+
+Define uma nova senha para o usuário usando o token de redefinição.
+
+  * **Método:** `POST`
+  * **Endpoint:** `{{Host}}/auth/reset-password/{{resetToken}}`
+  * **Corpo da Requisição (JSON):**
+    ```json
+    {
+        "password": "NovaPassword123!",
+        "passwordConfirm": "NovaPassword123!"
+    }
+    ```
+
+-----
+
+## 2\. Módulo de Administração (`/admin`)
+
+Endpoints restritos a usuários com permissão de administrador.
+
+### **2.1. Produtos (Admin)**
+
+#### **Criar Novo Produto**
+
+  * **Método:** `POST`
+  * **Endpoint:** `{{Host}}/admin/products`
+  * **Header:** `Authorization: Bearer {{accessTokenAdmin}}`
+  * **Corpo (JSON):**
+    ```json
+    {
+        "name": "Tênis Esportivo XYZ",
+        "description": "Tênis confortável, ideal para corridas e uso diário.",
+        "price": 299.90,
+        "promotionalPrice": 249.90,
+        "isPromotionActive": true,
+        "stockQuantity": 50,
+        "isActive": true,
+        "rating": 4.5
+    }
+    ```
+  * **Corpo (Form-Data para upload de imagens):**
+      * `name`: (text) Nome do produto.
+      * `description`: (text) Descrição.
+      * `price`: (text) Preço.
+      * ... (demais campos)
+      * `images`: (file) Arquivos de imagem.
+
+#### **Listar Produtos**
+
+  * **Método:** `GET`
+  * **Endpoint:** `{{Host}}/admin/products`
+  * **Header:** `Authorization: Bearer {{accessTokenAdmin}}`
+  * **Query Params (Exemplo):** `?inPromotion=true`
+
+#### **Listar Produto por ID**
+
+  * **Método:** `GET`
+  * **Endpoint:** `{{Host}}/admin/products/{{productIdAdmin}}`
+  * **Header:** `Authorization: Bearer {{accessTokenAdmin}}`
+
+#### **Atualizar Produto**
+
+  * **Método:** `PATCH`
+  * **Endpoint:** `{{Host}}/admin/products/{{productIdAdmin}}`
+  * **Header:** `Authorization: Bearer {{accessTokenAdmin}}`
+  * **Corpo (JSON):**
+    ```json
+    {
+      "name": "Tênis Esportivo XYZ Atualizado",
+      "isPromotionActive": false
+    }
+    ```
+
+#### **Deletar Produto**
+
+  * **Método:** `DELETE`
+  * **Endpoint:** `{{Host}}/admin/products/{{productIdAdmin}}`
+  * **Header:** `Authorization: Bearer {{accessTokenAdmin}}`
+
+-----
+
+### **2.2. Imagens de Produto (Admin)**
+
+#### **Adicionar Imagem**
+
+  * **Método:** `POST`
+  * **Endpoint:** `{{Host}}/admin/products/{{productIdAdmin}}/images`
+  * **Header:** `Authorization: Bearer {{accessTokenAdmin}}`
+  * **Corpo (Form-Data):**
+      * `images`: (file) Arquivo de imagem.
+
+#### **Atualizar Imagens**
+
+  * **Método:** `PATCH`
+  * **Endpoint:** `{{Host}}/admin/products/{{productIdAdmin}}/images`
+  * **Header:** `Authorization: Bearer {{accessTokenAdmin}}`
+  * **Corpo (JSON):**
+    ```json
+    {
+      "ids": ["68acbf930499853a4f7b8709", "68acbf930499853a4f7b8708"]
+    }
+    ```
+
+#### **Deletar Imagens**
+
+  * **Método:** `DELETE`
+  * **Endpoint:** `{{Host}}/admin/products/{{productIdAdmin}}/images`
+  * **Header:** `Authorization: Bearer {{accessTokenAdmin}}`
+  * **Corpo (JSON):**
+    ```json
+    {
+      "ids": ["68accc243b7d587227997eab"]
+    }
+    ```
+
+-----
+
+### **2.3. Métodos de Pagamento (Admin)**
+
+  * **Criar:** `POST {{Host}}/admin/payment-methods`
+  * **Listar:** `GET {{Host}}/admin/payment-methods`
+  * **Atualizar:** `PUT {{Host}}/admin/payment-methods/{paymentMethodId}`
+
+### **2.4. Cupons (Admin)**
+
+  * **Criar:** `POST {{Host}}/admin/coupons`
+  * **Listar:** `GET {{Host}}/admin/coupons`
+  * **Listar por ID:** `GET {{Host}}/admin/coupons/{couponId}`
+  * **Atualizar:** `PUT {{Host}}/admin/coupons/{couponId}`
+  * **Deletar:** `DELETE {{Host}}/admin/coupons/{couponId}`
+
+### **2.5. Usuários (Admin)**
+
+  * **Forçar Redefinição de Senha:** `POST {{Host}}/admin/users/{userId}/force-password-reset`
+  * **Listar Clientes:** `GET {{Host}}/admin/users`
+  * **Obter Detalhes do Cliente:** `GET {{Host}}/admin/users/{userId}`
+
+### **2.6. Pedidos (Admin)**
+
+  * **Listar Pedidos:** `GET {{Host}}/admin/orders`
+  * **Listar Pedido por ID:** `GET {{Host}}/admin/orders/{{orderId}}`
+  * **Atualizar Status do Pedido:** `PATCH {{Host}}/admin/orders/{{orderId}}`
+
+-----
+
+## 3\. Módulo de Usuários (`/users`)
+
+Endpoints para o usuário logado gerenciar seus próprios dados.
+
+### **3.1. Dados do Perfil**
+
+  * **Listar Perfil:** `GET {{Host}}/users/me`
+  * **Atualizar Perfil:** `PATCH {{Host}}/users/me`
+  * **Atualizar Senha:** `PUT {{Host}}/users/me/password`
+
+### **3.2. Endereços**
+
+  * **Adicionar Endereço:** `POST {{Host}}/users/me/addresses`
+  * **Listar Endereços:** `GET {{Host}}/users/me/addresses`
+  * **Obter Detalhes de um Endereço:** `GET {{Host}}/users/me/addresses/{{addressId}}`
+  * **Atualizar Endereço:** `PATCH {{Host}}/users/me/addresses/{{addressId}}`
+  * **Deletar Endereço:** `DELETE {{Host}}/users/me/addresses/{{addressId}}`
+
+### **3.3. Pedidos do Usuário**
+
+  * **Visualizar Meus Pedidos:** `GET {{Host}}/users/me/orders`
+  * **Obter Detalhes de um Pedido:** `GET {{Host}}/users/me/orders/{{orderId}}`
+
+-----
+
+## 4\. Módulo de Produtos (`/products`)
+
+Endpoints públicos para visualização de produtos.
+
+### **4.1. Listar Produtos**
+
+  * **Método:** `GET`
+  * **Endpoint:** `{{Host}}/products`
+  * **Query Params (Exemplo):**
+      * `search=Máscara`
+      * `inPromotion=false`
+      * `minPrice=10`
+      * `maxPrice=80`
+      * `page=1`
+      * `limit=5`
+      * `sortBy=price`
+      * `order=desc`
+
+### **4.2. Listar Produto por ID**
+
+  * **Método:** `GET`
+  * **Endpoint:** `{{Host}}/products/{{productId}}`
+
+-----
+
+## 5\. Módulo do Carrinho (`/cart`)
+
+Gerenciamento do carrinho de compras para usuários logados e visitantes.
+
+### **5.1. Usuário Logado**
+
+  * **Obter Carrinho:** `GET {{Host}}/cart` (requer `Authorization`)
+  * **Adicionar Item:** `POST {{Host}}/cart/items` (requer `Authorization`)
+  * **Atualizar Item:** `PUT {{Host}}/cart/items/{{cartProductId}}` (requer `Authorization`)
+  * **Deletar Item:** `DELETE {{Host}}/cart/items/{{cartProductId}}` (requer `Authorization`)
+
+### **5.2. Visitante (Guest)**
+
+Para visitantes, as requisições devem incluir o header `X-Guest-Cart-Id`.
+
+  * **Adicionar Item (Novo Carrinho):** `POST {{Host}}/cart/items` (a resposta conterá o `guestCartId`)
+  * **Adicionar Item (Carrinho Existente):** `POST {{Host}}/cart/items` (enviar `X-Guest-Cart-Id` no header)
+  * **Obter Carrinho:** `GET {{Host}}/cart` (enviar `X-Guest-Cart-Id` no header)
+  * **Atualizar/Deletar Item:** Usar os mesmos endpoints do usuário logado, mas enviando o header `X-Guest-Cart-Id`.
+
+### **5.3. Mesclar Carrinhos**
+
+Unifica o carrinho de visitante com o do usuário após o login.
+
+  * **Método:** `POST`
+  * **Endpoint:** `{{Host}}/cart/merge`
+  * **Header:** `Authorization: Bearer {{accessToken}}`
+  * **Corpo (JSON):**
+    ```json
+    {
+      "guestCartId": "{{guestCartId}}"
+    }
+    ```
+
+-----
+
+## 6\. Módulo de Checkout (`/checkout`)
+
+Endpoints para finalizar a compra.
+
+### **6.1. Pré-visualizar Cupom**
+
+  * **Método:** `POST`
+  * **Endpoint:** `{{Host}}/checkout/preview`
+  * **Header:** `Authorization: Bearer {{accessToken}}`
+  * **Corpo (JSON):**
+    ```json
+    {
+        "couponCode": "CEM"
+    }
+    ```
+
+### **6.2. Finalizar Compra**
+
+  * **Método:** `POST`
+  * **Endpoint:** `{{Host}}/checkout`
+  * **Header:** `Authorization: Bearer {{accessToken}}`
+  * **Corpo (JSON):**
+    ```json
+    {
+      "addressId": "{{addressId}}",
+      "paymentMethodIdentifier": "pix",
+      "couponCode": "OPCIONAL"
+    }
+    ```
+
+### **6.3. Listar Métodos de Pagamento Disponíveis**
+
+  * **Método:** `GET`
+  * **Endpoint:** `{{Host}}/payment-methods`
+  * **Header:** `Authorization: Bearer {{accessToken}}`

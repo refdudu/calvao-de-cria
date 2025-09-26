@@ -171,7 +171,3 @@ export interface CartContextType {
   clearCart: () => void;
 }
 
-export interface ItemsSummaryProps {
-  items: CartItem[];
-  showHeader?: boolean;
-}

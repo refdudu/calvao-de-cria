@@ -4,10 +4,8 @@ import type { Cart, AddToCartData, UpdateCartItemData } from "../types";
 export const cartService = {
   async getCart(): Promise<Cart> {
     try {
-      const {
-        data: { data },
-      } = await api.get("/cart");
-      return data;
+      const response = await api.get("/cart");
+      return response.data;
     } catch (error) {
       console.error("Erro ao buscar carrinho:", error);
       throw error;

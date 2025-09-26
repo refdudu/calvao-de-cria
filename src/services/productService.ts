@@ -16,7 +16,7 @@ export const productService = {
 
     try {
       const response = await api.get(`/products?${params.toString()}`);
-      return response.data;
+      return response;
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
       throw error;
@@ -26,7 +26,7 @@ export const productService = {
   async getProductById(productId: string): Promise<Product> {
     try {
       const response = await api.get(`/products/${productId}`);
-      return response.data.data;
+      return response.data;
     } catch (error) {
       console.error('Erro ao buscar produto:', error);
       throw error;

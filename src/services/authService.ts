@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { api } from '../utils/api';
 import type { 
   AuthResponse, 
@@ -5,7 +6,8 @@ import type {
   RegisterData, 
   ForgotPasswordData, 
   ResetPasswordData,
-  User
+  User,
+  AuthResponseData
 } from '../types';
 
 // Função para configurar o token no header da API
@@ -26,7 +28,7 @@ export const authService = {
   },
 
   // Fazer login
-  login: async (data: LoginData): Promise<AuthResponse> => {
+  login: async (data: LoginData): Promise<AuthResponseData> => {
     const response = await api.post('/auth/login', data);
     return response.data;
   },
@@ -36,16 +38,21 @@ export const authService = {
     await api.post('/auth/logout', { _id: userId });
   },
 
-  // Atualizar token
+  // Atualizar token (agora gerenciado automaticamente pela API)
   refreshToken: async (refreshToken: string): Promise<{ accessToken: string }> => {
-    const response = await api.post('/auth/refresh', { refreshToken });
-    return response.data.data;
+    // Esta função agora é usada apenas internamente pela API
+    // O refresh automático é gerenciado pelo interceptador
+    const response = await axios.post(
+      `${api.defaults.baseURL}/auth/refresh`,
+      { refreshToken }
+    );
+    return response.data;
   },
 
   // Esqueci minha senha
   forgotPassword: async (data: ForgotPasswordData): Promise<{ resetToken: string }> => {
     const response = await api.post('/auth/forgot-password', data);
-    return response.data.data;
+    return response.data;
   },
 
   // Redefinir senha

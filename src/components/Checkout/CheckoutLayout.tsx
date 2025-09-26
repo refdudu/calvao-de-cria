@@ -3,6 +3,7 @@ import "react-drawer/lib/react-drawer.css";
 import { CheckoutHeader } from "./CheckoutHeader";
 import { ItemsSummary } from "./ItemsSummary";
 import { mockCartItems } from "../../data/mockData";
+import { useCart } from "@/contexts/CartContext";
 
 export const CheckoutLayout = () => {
   return (
@@ -16,7 +17,7 @@ export const CheckoutLayout = () => {
               <Outlet />
             </div>
             <aside className="w-full md:w-auto">
-              <ItemsSummary items={mockCartItems} />
+              <ItemsSummary />
             </aside>
           </div>
         </div>

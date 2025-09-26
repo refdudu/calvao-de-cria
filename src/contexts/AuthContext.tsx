@@ -7,11 +7,13 @@ import type {
   RegisterData,
   ForgotPasswordData,
   ResetPasswordData,
-  AuthResponse,
 } from "../types";
 import { authService, setAuthToken } from "../services/authService";
-import { api } from "@/utils/api";
-import { cookieUtils, AUTH_COOKIE_KEYS, COOKIE_EXPIRY } from "../utils/cookieUtils";
+import {
+  cookieUtils,
+  AUTH_COOKIE_KEYS,
+  COOKIE_EXPIRY,
+} from "../utils/cookieUtils";
 
 // Contexto de autenticação
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,33 +32,46 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-
-
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Função para salvar tokens nos cookies
   const saveTokens = (accessToken: string, refreshToken: string) => {
-    cookieUtils.set(AUTH_COOKIE_KEYS.ACCESS_TOKEN, accessToken, COOKIE_EXPIRY.ACCESS_TOKEN);
-    cookieUtils.set(AUTH_COOKIE_KEYS.REFRESH_TOKEN, refreshToken, COOKIE_EXPIRY.REFRESH_TOKEN);
+    cookieUtils.set(
+      AUTH_COOKIE_KEYS.ACCESS_TOKEN,
+      accessToken,
+      COOKIE_EXPIRY.ACCESS_TOKEN
+    );
+    cookieUtils.set(
+      AUTH_COOKIE_KEYS.REFRESH_TOKEN,
+      refreshToken,
+      COOKIE_EXPIRY.REFRESH_TOKEN
+    );
     setAuthToken(accessToken);
   };
+
+
 
   // Função para remover tokens dos cookies
   const clearTokens = () => {
     cookieUtils.removeMultiple([
       AUTH_COOKIE_KEYS.ACCESS_TOKEN,
       AUTH_COOKIE_KEYS.REFRESH_TOKEN,
-      AUTH_COOKIE_KEYS.USER
+      AUTH_COOKIE_KEYS.USER,
     ]);
     setAuthToken(null);
   };
 
   // Função para salvar usuário nos cookies
-  const saveUser = (userData: User) => {
-    cookieUtils.set(AUTH_COOKIE_KEYS.USER, JSON.stringify(userData), COOKIE_EXPIRY.USER);
-    setUser(userData);
+  const saveUser = async () => {
+    const user = await authService.getCurrentUser();
+    cookieUtils.set(
+      AUTH_COOKIE_KEYS.USER,
+      JSON.stringify(user),
+      COOKIE_EXPIRY.USER
+    );
+    setUser(user);
   };
 
   // Função de login
@@ -64,16 +79,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       const response = await authService.login(data);
-      console.log("🚀 ~ login ~ response:", response.data);
-
-      api.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${response.data.tokens.accessToken}`;
-      const { tokens } = response.data;
-
+      console.log("🚀 ~ login ~ response:", response);
+      const { tokens } = response;
       saveTokens(tokens.accessToken, tokens.refreshToken);
-      const user = await authService.getCurrentUser();
-      saveUser(user);
+      await saveUser();
     } catch (error) {
       console.error("Erro no login:", error);
       throw error;
@@ -87,11 +96,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
       const response = await authService.register(data);
-
       const { tokens } = response.data;
-
       saveTokens(tokens.accessToken, tokens.refreshToken);
-      //   saveUser(userData);
+      await saveUser();
     } catch (error) {
       console.error("Erro no registro:", error);
       throw error;
@@ -134,29 +141,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // Função para atualizar token
-  const refreshToken = async (): Promise<boolean> => {
-    try {
-      const storedRefreshToken = cookieUtils.get(AUTH_COOKIE_KEYS.REFRESH_TOKEN);
 
-      if (!storedRefreshToken) {
-        return false;
-      }
-
-      const response = await authService.refreshToken(storedRefreshToken);
-      const newAccessToken = response.accessToken;
-
-      cookieUtils.set(AUTH_COOKIE_KEYS.ACCESS_TOKEN, newAccessToken, COOKIE_EXPIRY.ACCESS_TOKEN);
-      setAuthToken(newAccessToken);
-
-      return true;
-    } catch (error) {
-      console.error("Erro ao atualizar token:", error);
-      clearTokens();
-      setUser(null);
-      return false;
-    }
-  };
 
   // Função para carregar usuário dos cookies
   const loadUserFromCookies = async () => {
@@ -167,26 +152,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (storedUser && storedAccessToken) {
         try {
           // Tentar fazer parse do usuário armazenado
-          const parsedUser = JSON.parse(storedUser);
           setAuthToken(storedAccessToken);
+          const parsedUser = JSON.parse(storedUser);
           setUser(parsedUser);
-
-          // Verificar se o token ainda é válido fazendo uma requisição
           try {
-            const currentUser = await authService.getCurrentUser();
-            saveUser(currentUser);
+            await saveUser();
           } catch (error) {
-            console.warn("Token inválido, tentando refresh...");
-            // Token inválido, tentar refresh
-            const refreshed = await refreshToken();
-            if (!refreshed) {
-              console.warn("Refresh token também inválido, fazendo logout...");
+            console.warn("Token inválido, será renovado automaticamente nas próximas requisições");
+            // O token será renovado automaticamente pelo interceptador da API
+            // Por enquanto, apenas definimos o usuário com os dados salvos
+            try {
+              const parsedUser = JSON.parse(storedUser);
+              setUser(parsedUser);
+            } catch (parseError) {
+              console.error("Erro ao fazer parse dos dados do usuário:", parseError);
               clearTokens();
               setUser(null);
             }
           }
         } catch (parseError) {
-          console.error("Erro ao fazer parse dos dados do usuário:", parseError);
+          console.error(
+            "Erro ao fazer parse dos dados do usuário:",
+            parseError
+          );
           clearTokens();
           setUser(null);
         }
@@ -207,15 +195,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     loadUserFromCookies();
   }, []);
 
-  // Interceptador para refresh automático de token (pode ser implementado futuramente)
-  useEffect(() => {
-    // Aqui você pode adicionar um interceptador do axios para refresh automático
-    // quando receber 401 Unauthorized
-
-    return () => {
-      // Cleanup se necessário
-    };
-  }, []);
+  // O interceptador de refresh automático de token já está implementado no api.ts
 
   const value: AuthContextType = {
     user,

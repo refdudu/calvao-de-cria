@@ -14,14 +14,14 @@ export const ShoppingCartDrawer = ({
 }) => {
   const navigate = useNavigate();
   const { cart, updateCartItem, removeFromCart } = useCart();
-  console.log("🚀 ~ ShoppingCartDrawer ~ cart:", cart)
   const { isAuthenticated } = useAuth();
 
   // Calcular total do carrinho
-  const total = cart?.items?.reduce(
-    (acc: number, item: CartItem) => acc + item.totalItemPrice,
-    0
-  ) || 0;
+  const total =
+    cart?.items?.reduce(
+      (acc: number, item: CartItem) => acc + item.totalItemPrice,
+      0
+    ) || 0;
 
   const cartItems = cart?.items || [];
 
@@ -67,8 +67,8 @@ export const ShoppingCartDrawer = ({
               </div>
             ) : (
               cartItems.map((item: CartItem) => (
-                <ProductRowItem 
-                  key={item.productId} 
+                <ProductRowItem
+                  key={item.productId}
                   item={item}
                   onUpdateQuantity={updateCartItem}
                   onRemove={removeFromCart}
@@ -80,7 +80,7 @@ export const ShoppingCartDrawer = ({
             <div className="flex justify-between items-center">
               <span className="text-xl font-bold text-text1">Total</span>
               <span className="text-xl font-bold text-primary">
-                R$ {total.toFixed(2).replace(".", ",")}
+                R$ {total?.toFixed(2).replace(".", ",")}
               </span>
             </div>
             <Button onClick={handleCheckout}>Finalizar</Button>
@@ -93,11 +93,18 @@ export const ShoppingCartDrawer = ({
 
 interface ProductRowItemProps {
   item: CartItem;
-  onUpdateQuantity: (productId: string, data: { quantity: number }) => Promise<void>;
+  onUpdateQuantity: (
+    productId: string,
+    data: { quantity: number }
+  ) => Promise<void>;
   onRemove: (productId: string) => Promise<void>;
 }
 
-export const ProductRowItem = ({ item, onUpdateQuantity, onRemove }: ProductRowItemProps) => {
+export const ProductRowItem = ({
+  item,
+  onUpdateQuantity,
+  onRemove,
+}: ProductRowItemProps) => {
   const handleQuantityChange = async (newQuantity: number) => {
     if (newQuantity <= 0) {
       await onRemove(item.productId);
@@ -127,12 +134,12 @@ export const ProductRowItem = ({ item, onUpdateQuantity, onRemove }: ProductRowI
         </div>
 
         <div className="flex items-center justify-between">
-          <Counter 
+          <Counter
             quantity={item.quantity}
             onQuantityChange={handleQuantityChange}
           />
           <span className="text-lg font-bold text-primary">
-            R$ {item.totalItemPrice.toFixed(2).replace(".", ",")}
+            R$ {item.totalItemPrice?.toFixed(2).replace(".", ",")}
           </span>
         </div>
       </div>
@@ -155,7 +162,7 @@ const Counter = ({ quantity, onQuantityChange }: CounterProps) => {
 
   return (
     <div className="flex items-center border w-24 justify-center border-text1 rounded px-1 bg-white">
-      <button 
+      <button
         onClick={handleDecrease}
         className="h-5 w-5 rounded-full hover:bg-background transition-color flex items-center justify-center"
       >
@@ -164,7 +171,7 @@ const Counter = ({ quantity, onQuantityChange }: CounterProps) => {
       <span className="px-3 py-1 text-sm font-medium min-w-[2rem] text-center">
         {quantity}
       </span>
-      <button 
+      <button
         onClick={handleIncrease}
         className="h-5 w-5 rounded-full hover:bg-background transition-color flex items-center justify-center"
       >

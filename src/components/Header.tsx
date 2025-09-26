@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import Logo from "../assets/Logo.svg";
 import ShoppingCartIcon from "../assets/ShoppingCart.svg";
 import UserIcon from "../assets/User.svg";
 import { LogoIcon } from "./LogoIcon";
@@ -13,7 +12,8 @@ export const Header = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
   const { cart } = useCart();
 
   // Calcular total de itens no carrinho
-  const cartItemsCount = cart?.items?.reduce((total, item) => total + item.quantity, 0) || 0;
+  const cartItemsCount =
+    cart?.items?.reduce((total, item) => total + item.quantity, 0) || 0;
 
   const handleUserIconClick = () => {
     if (isAuthenticated) {
@@ -36,16 +36,26 @@ export const Header = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
         </div>
         <div className="flex gap-4 items-center">
           <button onClick={handleUserIconClick} className="relative">
-            <img className="h-10" src={UserIcon} alt="User" />
+            {!isAuthenticated && (
+              <img className="h-10" src={UserIcon} alt="User" />
+            )}
             {isAuthenticated && user && (
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-secondary rounded-full"></div>
+              <div className="h-10 w-10 bg-se rounded-full flex items-center justify-center text-white font-bold">
+                <span>
+                  {user.name
+                    ?.split(" ")
+                    .map((x) => x[0])
+                    .join("")}
+                </span>
+              </div>
+              //   <div className="absolute -top-1 -right-1 w-3 h-3 bg-secondary rounded-full"></div>
             )}
           </button>
           <button onClick={toggleDrawer} className="relative">
             <img className="h-10" src={ShoppingCartIcon} alt="Cart" />
             {cartItemsCount > 0 && (
               <div className="absolute -top-2 -right-2 bg-secondary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                {cartItemsCount > 9 ? '9+' : cartItemsCount}
+                {cartItemsCount > 9 ? "9+" : cartItemsCount}
               </div>
             )}
           </button>
@@ -112,4 +122,3 @@ function Tabs() {
     </div>
   );
 }
-
