@@ -47,12 +47,33 @@ export interface Cart {
 }
 
 export interface Address {
-  id: number;
-  name: string;
-  recipient: string;
-  address: string;
-  selected: boolean;
+  addressId: string;
+  alias: string;
+  recipientName: string;
+  cep: string;
+  street: string;
+  number: string;
+  complement?: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  phone: string;
 }
+
+export interface CreateAddressData {
+  alias: string;
+  recipientName: string;
+  cep: string;
+  street: string;
+  number: string;
+  complement?: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  phone: string;
+}
+
+export interface UpdateAddressData extends Partial<CreateAddressData> {}
 
 export interface PriceRange {
   label: string;

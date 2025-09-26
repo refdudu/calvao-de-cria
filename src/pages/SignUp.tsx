@@ -5,7 +5,6 @@ import { AuthPageWrapper, Button, FormInput } from "../components";
 import { Input, PasswordInput } from "../components/Input";
 import {
   EnvelopeIcon,
-  LockIcon,
   UserIcon,
   PhoneIcon,
   IdentificationCardIcon,
@@ -56,7 +55,10 @@ export const SignUpPage = () => {
       title="Criar nova conta"
       subtitle={
         <>
-          Ou <Link className="text-primary font-semibold" to="/auth/login">entrar na conta</Link>
+          Ou{" "}
+          <Link className="text-primary font-semibold" to="/auth/login">
+            entrar na conta
+          </Link>
         </>
       }
     >
