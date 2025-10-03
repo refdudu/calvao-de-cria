@@ -18,12 +18,12 @@ const OrderItemComponent = ({ item }: OrderItemComponentProps) => (
           {item.name}
         </p>
         <p className="text-xs text-text-secondary">
-          Quantidade: {item.quantity} x R$ {item.unitPrice.toFixed(2)}
+          Quantidade: {item.quantity} x R$ {item.priceAtTimeOfPurchase.toFixed(2)}
         </p>
       </div>
     </div>
     <span className="font-bold text-primary">
-      R$ {item.totalPrice.toFixed(2)}
+      R$ {item.totalItemPrice.toFixed(2)}
     </span>
   </div>
 );
@@ -53,6 +53,7 @@ const OrderCard = ({ order }: OrderCardProps) => {
   const getStatusText = (status: string) => {
     const statusMap: { [key: string]: string } = {
       'PENDING': 'Pendente',
+      'AWAITING_PAYMENT': 'Aguardando Pagamento',
       'PROCESSING': 'Processando',
       'SHIPPED': 'Enviado',
       'DELIVERED': 'Entregue',
@@ -64,6 +65,7 @@ const OrderCard = ({ order }: OrderCardProps) => {
   const getStatusColor = (status: string) => {
     const colorMap: { [key: string]: string } = {
       'PENDING': 'text-yellow-600',
+      'AWAITING_PAYMENT': 'text-orange-600',
       'PROCESSING': 'text-blue-600',
       'SHIPPED': 'text-purple-600',
       'DELIVERED': 'text-green-600',
@@ -83,7 +85,7 @@ const OrderCard = ({ order }: OrderCardProps) => {
         </div>
         <div>
           <h3 className="text-sm text-text-secondary">Total</h3>
-          <p className="font-semibold">R$ {order.total.toFixed(2)}</p>
+          <p className="font-semibold">R$ {order.totals.total.toFixed(2)}</p>
         </div>
         <div>
           <h3 className="text-sm text-text-secondary">Status</h3>
@@ -94,24 +96,24 @@ const OrderCard = ({ order }: OrderCardProps) => {
         <div>
           <h3 className="text-sm text-text-secondary">Endereço de entrega</h3>
           <p className="text-sm">
-            {'order.address.recipientName'}
+            {order.shippingAddress.recipientName}
             <br />
-            {'order.address.city'} - {'order.address.state'}
+            {order.shippingAddress.city} - {order.shippingAddress.state}
           </p>
         </div>
       </div>
       
       <h4 className="font-semibold text-text-primary mb-2">Itens do pedido</h4>
       <div className="space-y-2">
-        {/* {order.items.map((item, index) => (
+        {order.items.map((item, index) => (
           <OrderItemComponent key={`${item.productId}-${index}`} item={item} />
-        ))} */}
+        ))}
       </div>
       
       <div className="flex justify-end items-center mt-4 pt-4 border-t">
         <span className="text-text-secondary mr-4">Total</span>
         <span className="text-xl font-bold text-text-primary">
-          R$ {order.total.toFixed(2)}
+          R$ {order.totals.total.toFixed(2)}
         </span>
       </div>
     </div>
@@ -158,7 +160,7 @@ export const ProfileOrdersPage = () => {
       ) : (
         <div>
           {orders.map((order) => (
-            <OrderCard key={order.orderId} order={order} />
+            <OrderCard key={order.id} order={order} />
           ))}
         </div>
       )}

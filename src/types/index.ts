@@ -103,19 +103,30 @@ export interface UpdateUserData {
 export interface OrderItem {
   productId: string;
   name: string;
-  quantity: number;
-  unitPrice: number;
-  totalPrice: number;
   mainImageUrl?: string;
+  quantity: number;
+  priceAtTimeOfPurchase: number;
+  totalItemPrice: number;
 }
 export interface Order {
-  orderId: string;
-  total: number;
-  items: OrderItem[];
-  address: OrderAddress;
-  paymentMethod: string;
+  id: string;
+  orderNumber: string;
   status: string;
   createdAt: string;
+  shippingAddress: OrderAddress;
+  items: OrderItem[];
+  totals: {
+    subtotal: number;
+    discount: number;
+    shipping: number;
+    total: number;
+  };
+  paymentMethod: string;
+  paymentInfo?: {
+    type: string;
+    qrCodeImage?: string;
+    copyPasteCode?: string;
+  };
 }
 
 export interface OrderAddress {
@@ -134,6 +145,13 @@ export interface OrderAddress {
 
 export interface OrdersResponse {
   status: string;
+  message: string;
+  pagination: {
+    totalItems: number;
+    totalPages: number;
+    currentPage: number;
+    limit: number;
+  };
   data: Order[];
 }
 
