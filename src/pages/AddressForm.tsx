@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, FormInput } from "../components";
+import { Button, FormInput, CepInput, PhoneInput } from "../components";
 import { addressService } from "../services/addressService";
+import { removeCepMask, removePhoneMask, isValidPhone } from "../utils/maskUtils";
 import type { CreateAddressData } from "../types";
+import type { AddressData } from "../services/cepService";
 import { MapPinAreaIcon } from "@phosphor-icons/react";
 
 interface AddressFormData extends CreateAddressData {}
@@ -19,8 +21,31 @@ export const AddressFormPage = () => {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<AddressFormData>();
+
+  // Watch para os valores de CEP e telefone
+  const cepValue = watch("cep");
+  const phoneValue = watch("phone");
+
+  // Registra os campos customizados manualmente
+  useEffect(() => {
+    register("cep", {
+      required: "CEP é obrigatório",
+      validate: (value) => {
+        const cleanCep = removeCepMask(value);
+        return cleanCep.length === 8 || "CEP deve ter 8 dígitos";
+      }
+    });
+    register("phone", {
+      required: "Telefone é obrigatório",
+      validate: (value) => {
+        const cleanPhone = removePhoneMask(value);
+        return isValidPhone(cleanPhone) || "Telefone deve ter 10 ou 11 dígitos";
+      }
+    });
+  }, [register]);
 
   useEffect(() => {
     if (isEditing && addressId) {
@@ -57,12 +82,19 @@ export const AddressFormPage = () => {
     try {
       setIsLoading(true);
       
+      // Remove as máscaras antes de enviar
+      const processedData = {
+        ...data,
+        cep: removeCepMask(data.cep),
+        phone: removePhoneMask(data.phone),
+      };
+      
       if (isEditing && addressId) {
-        await addressService.updateAddress(addressId, data);
+        await addressService.updateAddress(addressId, processedData);
         // Se for edição, volta para a lista de endereços
         navigate("/checkout/");
       } else {
-        await addressService.createAddress(data);
+        await addressService.createAddress(processedData);
         // Se for criação, vai para a próxima etapa do checkout
         navigate("/checkout/confirm");
       }
@@ -72,6 +104,14 @@ export const AddressFormPage = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Função para preencher endereço quando CEP for encontrado
+  const handleAddressFound = (addressData: AddressData) => {
+    setValue("street", addressData.street);
+    setValue("neighborhood", addressData.neighborhood);
+    setValue("city", addressData.city);
+    setValue("state", addressData.state);
   };
 
   if (isLoadingAddress) {
@@ -109,16 +149,12 @@ export const AddressFormPage = () => {
             })}
           />
           
-          <FormInput
+          <CepInput
             placeholder="CEP"
             error={errors.cep?.message}
-            {...register("cep", { 
-              required: "CEP é obrigatório",
-              pattern: {
-                value: /^\d{8}$/,
-                message: "CEP deve ter 8 dígitos (ex: 01001000)"
-              }
-            })}
+            value={cepValue || ""}
+            onChange={(value: string) => setValue("cep", value)}
+            onAddressFound={handleAddressFound}
           />
           
           <FormInput
@@ -171,16 +207,11 @@ export const AddressFormPage = () => {
             })}
           />
           
-          <FormInput
+          <PhoneInput
             placeholder="Telefone"
             error={errors.phone?.message}
-            {...register("phone", { 
-              required: "Telefone é obrigatório",
-              pattern: {
-                value: /^\d{10,11}$/,
-                message: "Telefone deve ter 10 ou 11 dígitos"
-              }
-            })}
+            value={phoneValue || ""}
+            onChange={(value: string) => setValue("phone", value)}
           />
         </div>
         

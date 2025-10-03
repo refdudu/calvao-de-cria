@@ -8,4 +8,6 @@ export { Filter } from './Filter';
 export { QuantityAddButton } from './QuantityAddButton';
 export { default as AuthLayout } from './AuthLayout';
 export { FormInput } from './FormInput';
+export { CepInput } from './CepInput';
+export { PhoneInput } from './PhoneInput';
 export * from './Icons';

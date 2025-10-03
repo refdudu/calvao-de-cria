@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components";
-import { addressService } from "../services/addressService";
+import { useCheckout } from "../contexts/CheckoutContext";
 import type { Address } from "../types";
 
 import {
@@ -13,71 +12,17 @@ import {
 
 export const AddressPage = () => {
   const navigate = useNavigate();
-  const [addresses, setAddresses] = useState<Address[]>([]);
-  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    addresses,
+    selectedAddressId,
+    isLoadingAddresses,
+    addressError,
+    selectAddress,
+    deleteAddress,
+    loadAddresses,
+  } = useCheckout();
 
-  useEffect(() => {
-    loadAddresses();
-  }, []);
-
-  const loadAddresses = async () => {
-    try {
-      setIsLoading(true);
-      const addressesData = await addressService.getAddresses();
-      setAddresses(addressesData);
-      
-      // Se não há endereços, redirecionar para criar um novo
-      if (addressesData.length === 0) {
-        navigate('/checkout/address/');
-        return;
-      }
-      
-      // Selecionar o primeiro endereço
-      const defaultAddress = addressesData[0];
-      if (defaultAddress) {
-        setSelectedAddressId(defaultAddress.addressId);
-      }
-    } catch (err) {
-      console.error('Erro ao carregar endereços:', err);
-      setError('Erro ao carregar endereços');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSelectAddress = (addressId: string) => {
-    setSelectedAddressId(addressId);
-  };
-
-  const handleDeleteAddress = async (addressId: string) => {
-    if (window.confirm('Tem certeza que deseja excluir este endereço?')) {
-      try {
-        await addressService.deleteAddress(addressId);
-        
-        // Verificar se era o último endereço
-        if (addresses.length === 1) {
-          // Se era o último endereço, redirecionar para criar um novo
-          navigate('/checkout/address/');
-          return;
-        }
-        
-        await loadAddresses();
-        
-        // Se o endereço deletado era o selecionado, selecionar outro
-        if (selectedAddressId === addressId) {
-          const remainingAddresses = addresses.filter(addr => addr.addressId !== addressId);
-          setSelectedAddressId(remainingAddresses[0]?.addressId || null);
-        }
-      } catch (err) {
-        console.error('Erro ao deletar endereço:', err);
-        alert('Erro ao deletar endereço');
-      }
-    }
-  };
-
-  if (isLoading) {
+  if (isLoadingAddresses) {
     return (
       <div className="flex justify-center items-center h-64">
         <p>Carregando endereços...</p>
@@ -85,10 +30,10 @@ export const AddressPage = () => {
     );
   }
 
-  if (error) {
+  if (addressError) {
     return (
       <div className="text-center text-red-500">
-        <p>{error}</p>
+        <p>{addressError}</p>
         <Button size="small" onClick={loadAddresses} className="mt-4">
           Tentar novamente
         </Button>
@@ -119,9 +64,9 @@ export const AddressPage = () => {
                 key={addr.addressId}
                 address={addr}
                 isSelected={selectedAddressId === addr.addressId}
-                onSelect={() => handleSelectAddress(addr.addressId)}
+                onSelect={() => selectAddress(addr.addressId)}
                 onEdit={() => navigate(`/checkout/address/${addr.addressId}`)}
-                onDelete={() => handleDeleteAddress(addr.addressId)}
+                onDelete={() => deleteAddress(addr.addressId)}
               />
             ))}
           </div>
@@ -164,7 +109,7 @@ const AddressCard = ({
     )}
 
     <div
-      className={`p-4 rounded border-1 h-42 flex flex-col justify-end bg-white transition-colors cursor-pointer ${
+      className={`p-4 rounded border-1 h-52 flex flex-col justify-end bg-white transition-colors cursor-pointer ${
         isSelected ? "border-primary" : "border-gray-200 hover:border-primary"
       }`}
       onClick={onSelect}
