@@ -1,7 +1,8 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import classNames from "classnames";
+import { ProfileProvider } from "../contexts/ProfileContext";
 
-export const SettingsLayout = () => {
+const SettingsLayoutContent = () => {
   const location = useLocation();
 
   const navLinks = [
@@ -35,6 +36,14 @@ export const SettingsLayout = () => {
         <Outlet />
       </div>
     </div>
+  );
+};
+
+export const SettingsLayout = () => {
+  return (
+    <ProfileProvider>
+      <SettingsLayoutContent />
+    </ProfileProvider>
   );
 };
 

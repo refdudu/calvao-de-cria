@@ -84,7 +84,6 @@ export interface ProductCardProps {
   product: Product;
 }
 
-// Auth Types
 export interface User {
   id: string;
   name: string;
@@ -92,6 +91,50 @@ export interface User {
   cpf: string;
   birthDate: string;
   phone: string;
+}
+
+export interface UpdateUserData {
+  name?: string;
+  phone?: string;
+  // Email, CPF e data de nascimento normalmente não são editáveis
+}
+
+// Order Types
+export interface OrderItem {
+  productId: string;
+  name: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+  mainImageUrl?: string;
+}
+export interface Order {
+  orderId: string;
+  total: number;
+  items: OrderItem[];
+  address: OrderAddress;
+  paymentMethod: string;
+  status: string;
+  createdAt: string;
+}
+
+export interface OrderAddress {
+  recipientName: string;
+  street: string;
+  number: string;
+  complement?: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  cep: string;
+  phone: string;
+}
+
+
+
+export interface OrdersResponse {
+  status: string;
+  data: Order[];
 }
 
 export interface AuthTokens {
