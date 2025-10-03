@@ -1,9 +1,7 @@
 import { useState } from "react";
-import { Outlet, Link } from "react-router-dom";
-import Drawer from "react-drawer";
+import { Outlet } from "react-router-dom";
 import "react-drawer/lib/react-drawer.css";
 import { Header } from "./Header";
-import { createPortal } from "react-dom";
 import { ShoppingCartDrawer } from "./ShoppingCartDrawer";
 
 const Layout = () => {

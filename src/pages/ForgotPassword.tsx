@@ -1,4 +1,4 @@
-import { EnvelopeIcon, MailboxIcon } from "@phosphor-icons/react";
+import { EnvelopeIcon } from "@phosphor-icons/react";
 import { AuthPageWrapper, Button, Input,  } from "../components";
 
 export const ForgotPasswordPage = () => {

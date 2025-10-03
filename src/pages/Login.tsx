@@ -1,4 +1,4 @@
-import { UserIcon, LockIcon } from "@phosphor-icons/react";
+import { UserIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { AuthPageWrapper, Input, Button, FormInput } from "../components";
