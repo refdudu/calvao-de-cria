@@ -40,9 +40,16 @@ API RESTful desenvolvida em **Node.js + Express**, simulando um sistema de e-com
 3.  **Configure as variáveis de ambiente**:
     Crie um arquivo `.env` na raiz do projeto e adicione as seguintes variáveis:
     ```env
-    PORT=3000
-    MONGO_URI=mongodb://localhost:27017/calvao_de_cria
-    JWT_SECRET=sua_chave_secreta
+PORT=3000
+ACCESS_TOKEN_SECRET=segredo-do-access-token-super-secreto-mude-depois
+REFRESH_TOKEN_SECRET=segredo-do-refresh-token-ainda-mais-secreto-mude-depois
+DATABASE_USER=adminCalvo
+DATABASE_PASSWORD=pzcwnbc6Tn6n%hBRWvj62zSCk%JbhRufJ8t
+MONGO_URI=mongodb+srv://adminCalvo:pzcwnbc6Tn6n%25hBRWvj62zSCk%25JbhRufJ8t@cluster0.ifwhfbw.mongodb.net/calvao-de-cria
+CLOUDINARY_CLOUD_NAME=da8t2uqtc
+CLOUDINARY_API_KEY=158578586485752
+CLOUDINARY_API_SECRET=yEW9HPOhzHE4Qm59CFSQTtqYRBY
+NODE_ENV=development
     ```
 
 4.  **Inicie a aplicação**:
