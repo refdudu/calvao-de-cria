@@ -4,7 +4,7 @@ import { cookieUtils, AUTH_COOKIE_KEYS, COOKIE_EXPIRY } from "./cookieUtils";
 
 export const api = axios.create({
     baseURL:
-        process.env.API_URL ||
+        process.env.NEXT_PUBLIC_API_URL ||
         `https://apicalvaodecria-production.up.railway.app/api/v1`,
 });
 
